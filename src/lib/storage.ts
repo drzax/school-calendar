@@ -5,13 +5,13 @@ import { Categories } from '$lib/types.d';
 
 const getLocalStorage = (id: string) => {
 	try {
-		return JSON.parse(localStorage[`tweener:${id}`]);
+		return JSON.parse(localStorage[`${id}`]);
 	} catch (e) {}
 };
 
 const getStore = <T>(id: string, init: T) => {
 	const store = writable<T>(getLocalStorage(id) || init);
-	browser && store.subscribe((value) => (localStorage[`tweener:${id}`] = JSON.stringify(value)));
+	browser && store.subscribe((value) => (localStorage[`${id}`] = JSON.stringify(value)));
 	return store;
 };
 
