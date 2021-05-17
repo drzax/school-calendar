@@ -10,8 +10,11 @@
 		const years: number[] = [...title.matchAll(/(year|yr)\s([1-6])/gi)].map((d) => +d[2]);
 		if (title.match(/year 7/i)) years.push(6);
 		if (title.match(/prep/i)) years.push(0);
-		if (title.match(/junior/i)) years.push(0, 1, 2, 3);
-		if (title.match(/senior/i)) years.push(4, 5, 6);
+		if (title.match(/junior.+(assembly)/i)) years.push(0, 1, 2, 3);
+		if (title.match(/junior.+(choir)/i)) years.push(1, 2, 3);
+		if (title.match(/senior.+(assembly|choir)/i)) years.push(4, 5, 6);
+		if (title.match(/junior band/i)) years.push(4);
+		if (title.match(/senior band/i)) years.push(5, 6);
 		return years;
 	};
 
@@ -103,7 +106,7 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
+	<title>School Calendar</title>
 </svelte:head>
 
 <details class="text-center">
