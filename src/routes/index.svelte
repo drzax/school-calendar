@@ -1,6 +1,4 @@
 <script context="module" lang="ts">
-	export const prerender = true;
-
 	import type { Load } from '@sveltejs/kit';
 	import type { CalendarEntry } from '$lib/types.d';
 	import dayjs from 'dayjs';
