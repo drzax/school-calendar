@@ -1,7 +1,8 @@
 import { Categories } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
-import { createEvents } from 'ics';
+import pkg from 'ics';
+const { createEvents } = pkg;
 
 export const get: RequestHandler = async ({ query }) => {
 	const years = query.get('years').split('|').map(parseInt);
