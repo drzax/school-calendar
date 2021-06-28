@@ -21,6 +21,7 @@
 	import FilterChip from '$lib/FilterChip.svelte';
 	import { selectedCategories, selectedYearLevels } from '$lib/storage';
 	import { filterCalendarData } from '$lib/utils';
+	import { browser } from '$app/env';
 	export let calendar: CalendarEntry[];
 
 	let today = dayjs();
@@ -40,9 +41,10 @@
 	);
 
 	let icalUrl: string;
-	$: icalUrl = `/ical?years=${$selectedYearLevels.join('|')}&categories=${$selectedCategories.join(
-		'|'
-	)}`;
+	$: if (browser)
+		icalUrl = `webcal://${document.location.hostname}/ical?years=${$selectedYearLevels.join(
+			'|'
+		)}&categories=${$selectedCategories.join('|')}`;
 </script>
 
 <svelte:head>
@@ -64,7 +66,9 @@
 				<FilterChip bind:group={$selectedCategories} value={key} label={key} colour="green" />
 			{/each}
 		</div>
-		<a href={icalUrl}>ical</a>
+		{#if icalUrl}
+			<a href={icalUrl}>Subscribe to this calendar?</a>
+		{/if}
 	</div>
 </details>
 

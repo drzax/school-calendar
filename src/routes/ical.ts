@@ -23,5 +23,5 @@ export const get: RequestHandler = async ({ query }) => {
 		}))
 	);
 
-	return error ? { error } : { body: ics };
+	return error ? { error } : { body: ics, headers: { 'Content-Type': 'text/calendar' } };
 };
