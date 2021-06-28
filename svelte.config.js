@@ -13,7 +13,12 @@ const config = {
 
 	kit: {
 		adapter: netlify(),
-		target: '#svelte'
+		target: '#svelte',
+		vite: {
+			optimizeDeps: {
+				include: ['ics'] // 👈
+			}
+		}
 	}
 };
 
