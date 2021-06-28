@@ -3,7 +3,7 @@ import { Categories, YearLevels } from '$lib/types.d';
 import type { CalendarEntry } from '$lib/types.d';
 
 const inferYears = (title: string): number[] => {
-	const years: number[] = [...title.matchAll(/(year|yr)\s([1-6])/gi)].map((d) => +d[2]);
+	const years: number[] = [...title.matchAll(/(year|yr)\s?([1-6])/gi)].map((d) => +d[2]);
 	if (title.match(/year 7/i)) years.push(6);
 	if (title.match(/prep/i)) years.push(0);
 	if (title.match(/junior.+(assembly)/i)) years.push(0, 1, 2, 3);
