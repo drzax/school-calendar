@@ -1,8 +1,13 @@
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import toArray from 'dayjs/plugin/toArray';
 import { Categories } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
 import * as pkg from 'ics';
 const { createEvents } = pkg;
+dayjs.extend(utc);
+dayjs.extend(toArray);
 
 export const get: RequestHandler = async ({ query }) => {
 	const years = query.get('years').split('|').map(parseInt);
@@ -12,24 +17,31 @@ export const get: RequestHandler = async ({ query }) => {
 		.filter((d) => Object.values(Categories).includes(d as Categories)) as Categories[];
 
 	const data = filterCalendarData(await getCalendarData('153'), categories, years);
-	const { error, value: ics } = createEvents(
-		data.map((d) => {
-			const start: pkg.DateArray = d.allDay
-				? [d.start.year(), d.start.month() + 1, d.start.date()]
-				: [d.start.year(), d.start.month() + 1, d.start.date(), d.start.hour(), d.start.minute()];
-			const end: pkg.DateArray = d.allDay
-				? [d.end.year(), d.end.month() + 1, d.end.date()]
-				: [d.end.year(), d.end.month() + 1, d.end.date(), d.start.hour(), d.start.minute()];
+	const eventsJson = data.map(
+		({ allDay, start: startObj, end: endObj, title, location, description }) => {
+			const start = startObj
+				.utc()
+				.toArray()
+				.slice(0, allDay ? 3 : 5)
+				.map((d, i) => (i === 1 ? d + 1 : d)) as pkg.DateArray;
+			const end = endObj
+				.utc()
+				.toArray()
+				.slice(0, allDay ? 3 : 5)
+				.map((d, i) => (i === 1 ? d + 1 : d)) as pkg.DateArray;
+
 			return {
 				start,
 				end,
-				title: d.title,
-				location: d.location,
-				description: d.description,
+				title: title,
+				location: location,
+				description: description,
 				calName: 'School Calendar'
 			};
-		})
+		}
 	);
+
+	const { error, value: ics } = createEvents(eventsJson);
 
 	return error ? { error } : { body: ics };
 };

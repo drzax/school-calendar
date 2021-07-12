@@ -55,11 +55,10 @@ const makeCalendarEntry = (obj: any): CalendarEntry => {
 
 export const getCalendarData = async (id: string) => {
 	const now = dayjs();
-	const res = await fetch(
-		`https://epublisherapp.com/public/calendar/getevent/${id}?category=&start=2015-01-01&false=${
-			now.year() + 1
-		}-01-01`
-	);
+	const url = `https://epublisherapp.com/public/calendar/getevent/${id}?category=&start=${now
+		.subtract(1, 'week')
+		.format('YYYY-MM-DD')}&false=${now.year() + 1}-01-01`;
+	const res = await fetch(url);
 
 	if (res.ok) {
 		return ((await res.json()) as any[])
