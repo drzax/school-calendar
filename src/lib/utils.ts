@@ -28,19 +28,26 @@ const makeCalendarEntry = (obj: any): CalendarEntry => {
 	const yearLevels = inferYears(obj.title);
 	const categories = inferCategories(obj.title);
 
+	const start = dayjs(obj.start);
+	const end = dayjs(obj.end);
+	const allDay = obj.allDay === '1' || start.isSame(end);
+
 	return {
-		allDay: obj.allDay === '1',
+		allDay,
 		category: obj.category,
+		title: obj.title,
 		description: obj.description,
-		edate: obj.edate,
-		end: dayjs(obj.end),
-		etime: obj.etime,
 		id: obj.id,
 		location: obj.location,
+		// Start
 		sdate: obj.sdate,
-		start: dayjs(obj.start),
+		start,
 		stime: obj.stime,
-		title: obj.title,
+		// End
+		edate: obj.edate,
+		end: allDay && !start.isSame(end) ? end.subtract(1, 'minute') : end,
+		etime: obj.etime,
+		// Inferred categories
 		yearLevels,
 		categories
 	};

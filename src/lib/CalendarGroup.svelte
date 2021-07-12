@@ -27,10 +27,8 @@
 							/>
 						</svg>
 						{start.format('dddd, D MMMM')}
-						{#if !end.subtract(1, 'minute').isSame(start, 'day')}
-							- {end.hour() === 0 && end.minute() === 0
-								? end.subtract(1, 'minute').format('dddd, D MMMM')
-								: end.format('dddd, D MMMM')}{/if}
+						{#if !end.isSame(start, 'day')}
+							- {end.format('dddd, D MMMM')}{/if}
 					</span>
 					<span class="ml-3"
 						><svg
