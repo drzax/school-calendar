@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import toArray from 'dayjs/plugin/toArray';
+import utc from 'dayjs/plugin/utc.js';
+import toArray from 'dayjs/plugin/toArray.js';
 import { Categories } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
