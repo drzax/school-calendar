@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import toArray from 'dayjs/plugin/toArray.js';
 import { Categories } from '$lib/types.d';
@@ -8,6 +8,21 @@ import * as pkg from 'ics';
 const { createEvents } = pkg;
 dayjs.extend(utc);
 dayjs.extend(toArray);
+
+enum DateArrayPrecision {
+	DAY = 3,
+	HOUR = 4,
+	MINUTE = 5
+}
+
+const getDateArray = (date: Dayjs, precision: DateArrayPrecision): pkg.DateArray => {
+	return date
+		.utc()
+		.format('YYYY-MM-DD-H-m')
+		.split('-')
+		.map((d) => +d)
+		.slice(0, precision) as pkg.DateArray;
+};
 
 export const get: RequestHandler = async ({ query }) => {
 	const years = query.get('years').split('|').map(parseInt);
@@ -19,16 +34,8 @@ export const get: RequestHandler = async ({ query }) => {
 	const data = filterCalendarData(await getCalendarData('153'), categories, years);
 	const eventsJson = data.map(
 		({ allDay, start: startObj, end: endObj, title, location, description }) => {
-			const start = startObj
-				.utc()
-				.toArray()
-				.slice(0, allDay ? 3 : 5)
-				.map((d, i) => (i === 1 ? d + 1 : d)) as pkg.DateArray;
-			const end = endObj
-				.utc()
-				.toArray()
-				.slice(0, allDay ? 3 : 5)
-				.map((d, i) => (i === 1 ? d + 1 : d)) as pkg.DateArray;
+			const start = getDateArray(startObj, allDay ? 3 : 5);
+			const end = getDateArray(endObj, allDay ? 3 : 5);
 
 			return {
 				start,
