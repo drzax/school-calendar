@@ -43,5 +43,5 @@ export const get: RequestHandler = async ({ query }) => {
 
 	const { error, value: ics } = createEvents(eventsJson);
 
-	return error ? { error } : { body: ics };
+	return error ? { error } : { body: ics, headers: { 'Content-Type': 'text/calendar' } };
 };
