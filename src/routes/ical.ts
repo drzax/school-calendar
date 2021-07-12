@@ -1,12 +1,13 @@
 import type { Dayjs } from 'dayjs';
-// import utc from 'dayjs/plugin/utc.js';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
 // import toArray from 'dayjs/plugin/toArray.js';
 import { Categories } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
 import * as pkg from 'ics';
 const { createEvents } = pkg;
-// dayjs.extend(utc);
+dayjs.extend(utc);
 // dayjs.extend(toArray);
 
 enum DateArrayPrecision {
@@ -33,7 +34,7 @@ export const get: RequestHandler = async ({ query }) => {
 		.filter((d) => Object.values(Categories).includes(d as Categories)) as Categories[];
 
 	const data = filterCalendarData(await getCalendarData('153'), categories, years);
-	const eventsJson = data.map(
+	const eventsJson: pkg.EventAttributes[] = data.map(
 		({ allDay, start: startObj, end: endObj, title, location, description }) => {
 			const start = getDateArray(startObj, allDay ? 3 : 5);
 			const end = getDateArray(endObj, allDay ? 3 : 5);
@@ -44,7 +45,9 @@ export const get: RequestHandler = async ({ query }) => {
 				title: title,
 				location: location,
 				description: description,
-				calName: 'School Calendar'
+				calName: 'School Calendar',
+				startOutputType: 'local',
+				endOutputType: 'local'
 			};
 		}
 	);
