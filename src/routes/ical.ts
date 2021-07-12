@@ -1,13 +1,13 @@
-import dayjs, { Dayjs } from 'dayjs';
-import utc from 'dayjs/plugin/utc.js';
-import toArray from 'dayjs/plugin/toArray.js';
+import type { Dayjs } from 'dayjs';
+// import utc from 'dayjs/plugin/utc.js';
+// import toArray from 'dayjs/plugin/toArray.js';
 import { Categories } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
 import * as pkg from 'ics';
 const { createEvents } = pkg;
-dayjs.extend(utc);
-dayjs.extend(toArray);
+// dayjs.extend(utc);
+// dayjs.extend(toArray);
 
 enum DateArrayPrecision {
 	DAY = 3,
@@ -16,12 +16,13 @@ enum DateArrayPrecision {
 }
 
 const getDateArray = (date: Dayjs, precision: DateArrayPrecision): pkg.DateArray => {
-	return date
-		.utc()
+	const res = date
 		.format('YYYY-MM-DD-H-m')
 		.split('-')
 		.map((d) => +d)
 		.slice(0, precision) as pkg.DateArray;
+
+	return res;
 };
 
 export const get: RequestHandler = async ({ query }) => {
@@ -50,5 +51,5 @@ export const get: RequestHandler = async ({ query }) => {
 
 	const { error, value: ics } = createEvents(eventsJson);
 
-	return error ? { error } : { body: ics, headers: { 'Content-Type': 'text/calendar' } };
+	return error ? { error } : { body: ics };
 };
