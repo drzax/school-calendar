@@ -28,7 +28,9 @@
 						</svg>
 						{start.format('dddd, D MMMM')}
 						{#if !end.isSame(start, 'day')}
-							- {end.format('dddd, D MMMM')}{/if}
+							- {allDay && !start.isSame(end)
+								? end.subtract(1, 'minute').format('dddd, D MMMM')
+								: end.format('dddd, D MMMM')}{/if}
 					</span>
 					<span class="ml-3"
 						><svg

@@ -45,7 +45,7 @@ const makeCalendarEntry = (obj: any): CalendarEntry => {
 		stime: obj.stime,
 		// End
 		edate: obj.edate,
-		end: allDay && !start.isSame(end) ? end.subtract(1, 'minute') : end,
+		end,
 		etime: obj.etime,
 		// Inferred categories
 		yearLevels,
