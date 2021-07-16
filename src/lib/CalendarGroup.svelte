@@ -6,10 +6,20 @@
 
 <h3 class="ml-3 text-xl font-semibold mt-10">{title}</h3>
 <div class="rounded-md my-2 bg-white shadow">
-	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, stime, etime, location } (id)}
+	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, stime, etime, location, isNew, isUpdated } (id)}
 		<div class="p-3 border-b flex flex-col md:flex-row justify-start">
 			<div class="md:mx-2 md:my-0 my-2 flex-1">
-				<h4 class="font-semibold text-pink-500">{title}</h4>
+				<h4 class="font-semibold text-pink-500">
+					{#if isNew}<span
+							class="text-sm rounded-xl px-2 inline-block text-purple-800 bg-purple-100 font-bold"
+							>new</span
+						>
+					{:else if isUpdated}<span
+							class="text-sm rounded-xl px-2 inline-block text-purple-800 bg-purple-100 font-bold"
+							>updated</span
+						>
+					{/if}{title}
+				</h4>
 				<p class="text-gray-500 text-sm">
 					<span>
 						<svg
