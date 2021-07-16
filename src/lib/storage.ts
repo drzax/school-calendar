@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { writable } from 'svelte/store';
 import { browser } from '$app/env';
 import type { CalendarDigestEntry, YearLevels } from '$lib/types.d';
@@ -5,14 +6,16 @@ import { Categories } from '$lib/types.d';
 
 type storateType = 'local' | 'session';
 
-const getBrowserStorage = (id: string, type: storateType) => {
+const now = dayjs().toString();
+
+const getBrowserStorage = <T>(id: string, type: storateType): T | undefined => {
 	try {
 		return JSON.parse(type === 'local' ? localStorage[id] : sessionStorage[id]);
 	} catch (e) {}
 };
 
 const getStore = <T>(id: string, init: T, type: storateType) => {
-	const store = writable<T>(getBrowserStorage(id, type) || init);
+	const store = writable<T>(getBrowserStorage<T>(id, type) || init);
 	browser &&
 		store.subscribe((value) =>
 			type === 'local'
@@ -33,5 +36,6 @@ export const selectedCategories = getStore<Categories[]>(
 	'local'
 );
 export const calendarDigest = getStore<CalendarDigestEntry[]>('digest', [], 'local');
-export const lastSessionDate = getStore<string>('lastSessionDate', undefined, 'session');
-export const thisSessionDate = getStore<string>('thisSessionDate', undefined, 'local');
+export const lastSessionDate = getStore<string>('lastSessionDate', now, 'session');
+export const thisSessionDate = getStore<string>('thisSessionDate', now, 'local');
+export const firstSessionDate = getStore<string>('firstSessionDate', now, 'local');
