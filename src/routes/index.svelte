@@ -24,7 +24,8 @@
 		thisSessionDate,
 		selectedCategories,
 		selectedYearLevels,
-		calendarDigest
+		calendarDigest,
+		firstSessionDate
 	} from '$lib/storage';
 	import { filterCalendarData } from '$lib/utils';
 	import type { CalendarDigestData } from '$lib/types.d';
@@ -39,6 +40,10 @@
 		const now = today.toString();
 		$lastSessionDate = $thisSessionDate || now;
 		$thisSessionDate = now;
+	}
+
+	$: if (typeof $firstSessionDate === 'undefined') {
+		$firstSessionDate = today.toString();
 	}
 
 	$: filteredCalendar = filterCalendarData(
@@ -72,19 +77,19 @@
 
 			const lastSessionDateObj = dayjs($lastSessionDate);
 			const thisSessionDateObj = dayjs($thisSessionDate);
-			const createdDateObj = dayjs(digestEntry.created);
-			const updatedDateObj = dayjs(digestEntry.updated);
+			const firstSessionDateObj = dayjs($firstSessionDate);
+			const earlier = thisSessionDateObj.subtract(4, 'days');
+			const createdDateObj = dayjs(digestEntry?.created || $thisSessionDate);
+			const updatedDateObj = dayjs(digestEntry?.updated || $thisSessionDate);
 
 			return {
 				...entry,
 				isNew:
-					!lastSessionDateObj.isSame(thisSessionDateObj) &&
-					(createdDateObj.isAfter(lastSessionDateObj) ||
-						createdDateObj.isAfter(thisSessionDateObj.subtract(1, 'days'))),
+					createdDateObj.isAfter(firstSessionDateObj) &&
+					(createdDateObj.isAfter(lastSessionDateObj) || createdDateObj.isAfter(earlier)),
 				isUpdated:
-					!lastSessionDateObj.isSame(thisSessionDateObj) &&
-					(updatedDateObj.isAfter(lastSessionDateObj) ||
-						updatedDateObj.isAfter(thisSessionDateObj.subtract(1, 'days')))
+					updatedDateObj.isAfter(firstSessionDateObj) &&
+					(updatedDateObj.isAfter(lastSessionDateObj) || updatedDateObj.isAfter(earlier))
 			};
 		});
 
