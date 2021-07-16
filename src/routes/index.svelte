@@ -1,7 +1,5 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
-	import type { CalendarEntry } from '$lib/types.d';
-	import dayjs from 'dayjs';
 	import { Categories, YearLevels } from '$lib/types.d';
 	import { getCalendarData } from '$lib/utils';
 
@@ -17,26 +15,89 @@
 </script>
 
 <script lang="ts">
+	import dayjs from 'dayjs';
+	import type { CalendarEntry } from '$lib/types.d';
 	import CalendarGroup from '$lib/CalendarGroup.svelte';
 	import FilterChip from '$lib/FilterChip.svelte';
-	import { selectedCategories, selectedYearLevels } from '$lib/storage';
+	import {
+		lastSessionDate,
+		thisSessionDate,
+		selectedCategories,
+		selectedYearLevels,
+		calendarDigest
+	} from '$lib/storage';
 	import { filterCalendarData } from '$lib/utils';
+	import type { CalendarDigestData } from '$lib/types.d';
+	import hash from 'hash-it';
 	import { browser } from '$app/env';
 	export let calendar: CalendarEntry[];
 
 	let today = dayjs();
 
-	$: filteredCalendar = filterCalendarData(calendar, $selectedCategories, $selectedYearLevels);
+	// If this is a new session, store the last session in session storage and update the current session date in local storage
+	$: if (typeof $lastSessionDate === 'undefined') {
+		const now = today.toString();
+		$lastSessionDate = $thisSessionDate || now;
+		$thisSessionDate = now;
+	}
 
-	$: thisWeek = filteredCalendar.filter(
-		({ start, end }) => start.isAfter(today.startOf('week')) && start.isBefore(today.endOf('week'))
-	);
-	$: nextWeek = filteredCalendar.filter(
+	$: filteredCalendar = filterCalendarData(
+		calendar,
+		$selectedCategories,
+		$selectedYearLevels
+	).filter(({ start }) => start.isAfter(today.startOf('week')));
+
+	const calendarDigestMap = new Map<string, CalendarDigestData>($calendarDigest);
+
+	$: if (browser) {
+		$calendarDigest = filteredCalendar.map((entry) => {
+			const lastDigest = calendarDigestMap.get(entry.id);
+			const thisHash = hash(entry);
+			return [
+				entry.id,
+				{
+					updated: lastDigest?.hash === thisHash ? lastDigest.updated : $thisSessionDate,
+					created: lastDigest?.created || $thisSessionDate,
+					hash: thisHash
+				}
+			];
+		});
+	}
+
+	let filteredCalendarWithMeta: CalendarEntry[];
+
+	$: if (browser)
+		filteredCalendarWithMeta = filteredCalendar.map((entry) => {
+			const digestEntry = $calendarDigest.find(([id]) => id === entry.id)?.[1];
+
+			const lastSessionDateObj = dayjs($lastSessionDate);
+			const thisSessionDateObj = dayjs($thisSessionDate);
+			const createdDateObj = dayjs(digestEntry.created);
+			const updatedDateObj = dayjs(digestEntry.updated);
+
+			return {
+				...entry,
+				isNew:
+					!lastSessionDateObj.isSame(thisSessionDateObj) &&
+					(createdDateObj.isAfter(lastSessionDateObj) ||
+						createdDateObj.isAfter(thisSessionDateObj.subtract(1, 'days'))),
+				isUpdated:
+					!lastSessionDateObj.isSame(thisSessionDateObj) &&
+					(updatedDateObj.isAfter(lastSessionDateObj) ||
+						updatedDateObj.isAfter(thisSessionDateObj.subtract(1, 'days')))
+			};
+		});
+
+	var displayableCalendar: CalendarEntry[];
+	$: displayableCalendar = filteredCalendarWithMeta || filteredCalendar;
+
+	$: thisWeek = displayableCalendar.filter(({ start, end }) => start.isBefore(today.endOf('week')));
+	$: nextWeek = displayableCalendar.filter(
 		({ start, end }) =>
 			start.isAfter(today.add(1, 'week').startOf('week')) &&
 			start.isBefore(today.add(1, 'week').endOf('week'))
 	);
-	$: later = filteredCalendar.filter(({ start, end }) =>
+	$: later = displayableCalendar.filter(({ start, end }) =>
 		start.isAfter(today.add(1, 'week').endOf('week'))
 	);
 
