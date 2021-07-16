@@ -17,7 +17,7 @@ export enum Categories {
 }
 
 export enum YearLevels {
-	'Prep',
+	'Prep' = 0,
 	'Year 1',
 	'Year 2',
 	'Year 3',

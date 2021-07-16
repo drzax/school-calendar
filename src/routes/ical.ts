@@ -2,7 +2,7 @@ import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 // import toArray from 'dayjs/plugin/toArray.js';
-import { Categories } from '$lib/types.d';
+import { Categories, YearLevels } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
 import * as pkg from 'ics';
@@ -27,11 +27,15 @@ const getDateArray = (date: Dayjs, precision: DateArrayPrecision): pkg.DateArray
 };
 
 export const get: RequestHandler = async ({ query }) => {
-	const years = query.get('years').split('|').map(parseInt);
-	const categories = query
-		.get('categories')
-		.split('|')
-		.filter((d) => Object.values(Categories).includes(d as Categories)) as Categories[];
+	const years =
+		query.get('years')?.split('|').map(parseInt) ||
+		Object.values(YearLevels).filter((y): y is number => typeof y === 'number');
+	const categories =
+		query
+			.get('categories')
+			?.split('|')
+			.filter((d): d is Categories => Object.values(Categories).includes(d as Categories)) ||
+		Object.values(Categories);
 
 	const data = filterCalendarData(await getCalendarData('153'), categories, years);
 	const eventsJson: pkg.EventAttributes[] = data.map(
