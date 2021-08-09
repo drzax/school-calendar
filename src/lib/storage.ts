@@ -10,7 +10,14 @@ const now = dayjs().toString();
 
 const getBrowserStorage = <T>(id: string, type: storateType): T | undefined => {
 	try {
-		return JSON.parse(type === 'local' ? localStorage[id] : sessionStorage[id]);
+		switch (type) {
+			case 'local':
+				return JSON.parse(localStorage[id]);
+			case 'session':
+				return JSON.parse(sessionStorage[id]);
+			default:
+				throw new Error(`Storage type '${type}' not supported`);
+		}
 	} catch (e) {}
 };
 
@@ -36,6 +43,10 @@ export const selectedCategories = getStore<Categories[]>(
 	'local'
 );
 export const calendarDigest = getStore<CalendarDigestEntry[]>('digest', [], 'local');
-export const lastSessionDate = getStore<string>('lastSessionDate', now, 'session');
+export const lastSessionDate = getStore<string | undefined>(
+	'lastSessionDate',
+	undefined,
+	'session'
+);
 export const thisSessionDate = getStore<string>('thisSessionDate', now, 'local');
 export const firstSessionDate = getStore<string>('firstSessionDate', now, 'local');
