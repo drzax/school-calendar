@@ -17,7 +17,7 @@ export enum Categories {
 }
 
 export enum YearLevels {
-	'Prep',
+	'Prep' = 0,
 	'Year 1',
 	'Year 2',
 	'Year 3',
@@ -41,4 +41,9 @@ export type CalendarEntry = {
 	title: string;
 	yearLevels: YearLevels[];
 	categories: Categories[];
+	isNew?: boolean;
+	isUpdated?: boolean;
 };
+
+export type CalendarDigestData = { hash: number; updated: string; created: string };
+export type CalendarDigestEntry = [string, CalendarDigestData];

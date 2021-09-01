@@ -1,19 +1,52 @@
+import dayjs from 'dayjs';
 import { writable } from 'svelte/store';
 import { browser } from '$app/env';
-import type { YearLevels } from '$lib/types.d';
+import type { CalendarDigestEntry, YearLevels } from '$lib/types.d';
 import { Categories } from '$lib/types.d';
 
-const getLocalStorage = (id: string) => {
+type storateType = 'local' | 'session';
+
+const now = dayjs().toString();
+
+const getBrowserStorage = <T>(id: string, type: storateType): T | undefined => {
 	try {
-		return JSON.parse(localStorage[`${id}`]);
+		switch (type) {
+			case 'local':
+				return JSON.parse(localStorage[id]);
+			case 'session':
+				return JSON.parse(sessionStorage[id]);
+			default:
+				throw new Error(`Storage type '${type}' not supported`);
+		}
 	} catch (e) {}
 };
 
-const getStore = <T>(id: string, init: T) => {
-	const store = writable<T>(getLocalStorage(id) || init);
-	browser && store.subscribe((value) => (localStorage[`${id}`] = JSON.stringify(value)));
+const getStore = <T>(id: string, init: T, type: storateType) => {
+	const store = writable<T>(getBrowserStorage<T>(id, type) || init);
+	browser &&
+		store.subscribe((value) =>
+			type === 'local'
+				? (localStorage[id] = JSON.stringify(value))
+				: (sessionStorage[id] = JSON.stringify(value))
+		);
 	return store;
 };
 
-export const selectedYearLevels = getStore<YearLevels[]>('yearLevels', [0, 1, 2, 3, 4, 5, 6]);
-export const selectedCategories = getStore<Categories[]>('categories', Object.values(Categories));
+export const selectedYearLevels = getStore<YearLevels[]>(
+	'yearLevels',
+	[0, 1, 2, 3, 4, 5, 6],
+	'local'
+);
+export const selectedCategories = getStore<Categories[]>(
+	'categories',
+	Object.values(Categories),
+	'local'
+);
+export const calendarDigest = getStore<CalendarDigestEntry[]>('digest', [], 'local');
+export const lastSessionDate = getStore<string | undefined>(
+	'lastSessionDate',
+	undefined,
+	'session'
+);
+export const thisSessionDate = getStore<string>('thisSessionDate', now, 'local');
+export const firstSessionDate = getStore<string>('firstSessionDate', now, 'local');
