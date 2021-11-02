@@ -18,6 +18,7 @@
 	import dayjs from 'dayjs';
 	import type { CalendarEntry } from '$lib/types.d';
 	import CalendarGroup from '$lib/CalendarGroup.svelte';
+	import termDates from './term-dates.json';
 	import FilterChip from '$lib/FilterChip.svelte';
 	import {
 		lastSessionDate,
@@ -33,7 +34,7 @@
 	import { browser } from '$app/env';
 	export let calendar: CalendarEntry[];
 
-	let today = dayjs();
+	const today = dayjs();
 
 	// If this is a new session, store the last session in session storage and update the current session date in local storage
 	$: if (typeof $lastSessionDate === 'undefined') {
@@ -95,7 +96,10 @@
 
 	var displayableCalendar: CalendarEntry[];
 	$: displayableCalendar = filteredCalendarWithMeta || filteredCalendar;
-
+	const term = termDates
+		.map((t) => ({ name: t[0], start: dayjs(t[1]), end: dayjs(t[2]) }))
+		.filter((t) => today >= t.start.startOf('week') && today <= t.end.endOf('week'))[0];
+	const currentWeek = term && today.diff(term.start, 'week') + 1;
 	$: thisWeek = displayableCalendar.filter(({ start, end }) => start.isBefore(today.endOf('week')));
 	$: nextWeek = displayableCalendar.filter(
 		({ start, end }) =>
@@ -140,10 +144,18 @@
 
 <section class="m-1 p-1">
 	<div id="this-week">
-		<CalendarGroup title="This week" entries={thisWeek} />
+		<CalendarGroup
+			title="This week"
+			subtitle={`${term.name}, week ${currentWeek}`}
+			entries={thisWeek}
+		/>
 	</div>
 	<div id="next-week">
-		<CalendarGroup title="Next week" entries={nextWeek} />
+		<CalendarGroup
+			title="Next week"
+			subtitle={`${term.name}, week ${currentWeek + 1}`}
+			entries={nextWeek}
+		/>
 	</div>
 	<div id="beyond">
 		<CalendarGroup title="Beyond" entries={later} />

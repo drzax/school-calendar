@@ -1,10 +1,14 @@
 <script lang="ts">
 	import type { CalendarEntry } from '$lib/types.d';
 	export let title: string;
+	export let subtitle: string | undefined = undefined;
 	export let entries: CalendarEntry[];
 </script>
 
-<h3 class="ml-3 text-xl font-semibold mt-10">{title}</h3>
+<header class="flex mt-10 justify-between">
+	<h3 class="ml-3 text-xl font-semibold">{title}</h3>
+	{#if subtitle}<h4 class="mr-3 mt-1 text-sm text-gray-500">{subtitle}</h4>{/if}
+</header>
 <div class="rounded-md my-2 bg-white shadow">
 	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, stime, etime, location, isNew, isUpdated } (id)}
 		<div class="p-3 border-b flex flex-col md:flex-row justify-start">
