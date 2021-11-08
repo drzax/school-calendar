@@ -99,7 +99,7 @@
 	const term = termDates
 		.map((t) => ({ name: t[0], start: dayjs(t[1]), end: dayjs(t[2]) }))
 		.filter((t) => today >= t.start.startOf('week') && today <= t.end.endOf('week'))[0];
-	const currentWeek = term && today.diff(term.start, 'week') + 1;
+	const currentWeek = term && today.diff(term.start.startOf('week'), 'week') + 1;
 	$: thisWeek = displayableCalendar.filter(({ start, end }) => start.isBefore(today.endOf('week')));
 	$: nextWeek = displayableCalendar.filter(
 		({ start, end }) =>
@@ -146,14 +146,14 @@
 	<div id="this-week">
 		<CalendarGroup
 			title="This week"
-			subtitle={`${term.name}, week ${currentWeek}`}
+			subtitle={`Week ${currentWeek}, ${term.name}`}
 			entries={thisWeek}
 		/>
 	</div>
 	<div id="next-week">
 		<CalendarGroup
 			title="Next week"
-			subtitle={`${term.name}, week ${currentWeek + 1}`}
+			subtitle={`Week ${currentWeek + 1}, ${term.name}`}
 			entries={nextWeek}
 		/>
 	</div>
