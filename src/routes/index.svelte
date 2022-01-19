@@ -146,14 +146,14 @@
 	<div id="this-week">
 		<CalendarGroup
 			title="This week"
-			subtitle={`Week ${currentWeek}, ${term.name}`}
+			subtitle={currentWeek ? `Week ${currentWeek}, ${term.name}` : ''}
 			entries={thisWeek}
 		/>
 	</div>
 	<div id="next-week">
 		<CalendarGroup
 			title="Next week"
-			subtitle={`Week ${currentWeek + 1}, ${term.name}`}
+			subtitle={currentWeek ? `Week ${currentWeek + 1}, ${term.name}` : ''}
 			entries={nextWeek}
 		/>
 	</div>
