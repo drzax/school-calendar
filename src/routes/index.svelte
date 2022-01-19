@@ -141,7 +141,13 @@
 		{/if}
 	</div>
 </details>
-
+<section class="prose-blue bg-green-300 rounded-md shadow border-gray-500 p-3 mt-6">
+	Notice: Hopefully you're not getting your news <em>only</em> from here, but the start date below
+	is probably wrong.
+	<a class="font-bold" href="https://statements.qld.gov.au/statements/94234"
+		>School starts in Queensland on 7 February, 2022</a
+	>.
+</section>
 <section class="m-1 p-1">
 	<div id="this-week">
 		<CalendarGroup
