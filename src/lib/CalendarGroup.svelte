@@ -95,13 +95,15 @@
 	{:else}
 		<div class="p-3 text-gray-500 prose">
 			<h4>Nothing to see here!</h4>
-			<p>
-				Either it's school holidays — 😩 — or something might have gone 💥. So <a
-					href="https://epublisherapp.com/public/calendars/app/301935/C4801/ZUFqdWMyNzREK3lUYmw5bHBpRzZRQT09"
-					>check the real thing</a
-				>
-				and <a href="mailto:simon@elvery.net">let me know</a>.
-			</p>
+			{#if title === 'This week'}
+				<p>
+					Either it's school holidays — 😩 — or something might have gone 💥. So <a
+						href="https://epublisherapp.com/public/calendars/app/301935/C4801/ZUFqdWMyNzREK3lUYmw5bHBpRzZRQT09"
+						>check the real thing</a
+					>
+					and <a href="mailto:simon@elvery.net">let me know</a>.
+				</p>
+			{/if}
 		</div>
 	{/each}
 </div>
