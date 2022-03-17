@@ -2,8 +2,20 @@ import dayjs from 'dayjs';
 import { Categories, YearLevels } from '$lib/types.d';
 import type { CalendarEntry } from '$lib/types.d';
 
-const inferYears = (title: string): number[] => {
-	const years: number[] = [...title.matchAll(/(year|yr)\s?([1-6])/gi)].map((d) => +d[2]);
+export const inferYears = (title: string): number[] => {
+	const years: number[] = [];
+	[...title.matchAll(/(year|yr)\s?([1-6])(-([1-6]))?/gi)].forEach((d) => {
+		const start = +d[2];
+		years.push(start);
+		const end = +d[4];
+
+		if (end && end > start) {
+			for (let i = start + 1; i <= end; i++) {
+				years.push(i);
+			}
+		}
+	});
+
 	if (title.match(/year 7/i)) years.push(6);
 	if (title.match(/prep/i)) years.push(0);
 	if (title.match(/junior.+(assembly)/i)) years.push(0, 1, 2, 3);
@@ -11,6 +23,7 @@ const inferYears = (title: string): number[] => {
 	if (title.match(/senior.+(assembly|choir)/i)) years.push(4, 5, 6);
 	if (title.match(/junior band/i)) years.push(4);
 	if (title.match(/senior band/i)) years.push(5, 6);
+
 	return years;
 };
 
