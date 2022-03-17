@@ -18,7 +18,7 @@
 
 		<p class="mt-2">
 			Data is sourced directly from the live <a
-				href="https://epublisherapp.com/public/calendars/app/301935/C4801/ZUFqdWMyNzREK3lUYmw5bHBpRzZRQT09"
+				href="https://epublisherapp.com/public/calendars/app/301935/C1234/dEt1S3JGKzZkR3orNFp2aVQ2QTk4UT09"
 				>public calendar</a
 			>, which you should always treat as the source of truth (i.e. don't blame me if you miss an
 			assembly).
