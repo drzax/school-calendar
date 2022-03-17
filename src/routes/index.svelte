@@ -2,11 +2,12 @@
 	import type { Load } from '@sveltejs/kit';
 	import { Categories, YearLevels } from '$lib/types.d';
 	import { getCalendarData } from '$lib/utils';
+	import { CALENDAR_ID } from '$lib/constants';
 
 	export const load: Load = async ({ fetch }) => {
 		try {
 			return {
-				props: { calendar: await getCalendarData('978') }
+				props: { calendar: await getCalendarData(CALENDAR_ID) }
 			};
 		} catch (error) {
 			return { error };
@@ -148,7 +149,7 @@
 		>School starts in Queensland on 7 February, 2022</a
 	>.
 </section>
-<section class="m-1 p-1">
+<section class="m-1">
 	<div id="this-week">
 		<CalendarGroup
 			title="This week"

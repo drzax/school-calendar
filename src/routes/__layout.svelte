@@ -5,11 +5,11 @@
 
 <Header />
 
-<main class="container mx-auto max-w-3xl">
+<main class="container mx-auto max-w-3xl p-3">
 	<slot />
 </main>
 
-<footer class="container mx-auto text-center text-sm text-gray-500">
+<footer class="container mx-auto text-center text-sm text-gray-500 max-w-3xl">
 	<div class="max-w-lg mx-5">
 		<p>
 			This was built by <a href="https://elvery.net/">Simon Elvery</a> to scratch an itch (i.e. the regular

@@ -1,4 +1,4 @@
-<header class="text-center mt-10">
+<header class="text-center mt-10 container mx-auto max-w-3xl p-3">
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		class="h-12 w-12 text-gray-600 inline"
