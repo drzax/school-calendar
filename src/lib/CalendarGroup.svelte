@@ -22,7 +22,13 @@
 							class="text-sm rounded-xl px-2 inline-block text-purple-800 bg-purple-100 font-bold"
 							>updated</span
 						>
-					{/if}{title}
+					{/if}
+					{#if title.toLowerCase().includes('graduation')}
+						🎓
+					{:else if title.toLowerCase().includes('last day')}
+						🎉
+					{/if}
+					{title}
 				</h4>
 				<p class="text-gray-500 text-sm">
 					<span>
