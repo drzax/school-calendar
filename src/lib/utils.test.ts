@@ -77,3 +77,9 @@ test('inferYears senior choir', () => {
 	const years = inferYears(title);
 	expect(years).toEqual([5, 6]);
 });
+
+test('inferYears range with prep', () => {
+	const title = 'Prep-3 Swim Carnivals';
+	const years = inferYears(title);
+	expect(years).toEqual([0, 1, 2, 3]);
+});

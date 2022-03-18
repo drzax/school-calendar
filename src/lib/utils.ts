@@ -22,6 +22,13 @@ export const inferYears = (title: string): number[] => {
 		});
 	});
 
+	[...title.matchAll(/prep\s?-\s?([1-6])/gi)].forEach(([match, endYear]) => {
+		for (var i = 0; i <= +endYear; i++) {
+			years.push(i);
+		}
+	});
+
+	// This is a special case for year six activities about preparation for year 7
 	if (title.match(/year 7/i)) years.push(6);
 	if (title.match(/prep/i)) years.push(0);
 	if (title.match(/junior.+(assembly)/i)) years.push(0, 1, 2, 3);
