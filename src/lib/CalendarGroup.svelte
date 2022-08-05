@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CalendarEntry } from '$lib/types.d';
+	import { PUBLIC_CALENDAR } from './constants';
 	export let title: string;
 	export let subtitle: string | undefined = undefined;
 	export let entries: CalendarEntry[];
@@ -104,8 +105,7 @@
 			{#if title === 'This week'}
 				<p>
 					Either it's school holidays — 😩 — or something might have gone 💥. So <a
-						href="https://epublisherapp.com/public/calendars/app/301935/C4801/ZUFqdWMyNzREK3lUYmw5bHBpRzZRQT09"
-						>check the real thing</a
+						href={PUBLIC_CALENDAR}>check the real thing</a
 					>
 					and <a href="mailto:simon@elvery.net">let me know</a>.
 				</p>
