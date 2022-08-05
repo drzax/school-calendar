@@ -26,7 +26,7 @@ const getDateArray = (date: Dayjs, precision: DateArrayPrecision): pkg.DateArray
 	return res;
 };
 
-export const get: RequestHandler = async ({ query }) => {
+export const get: RequestHandler = async ({ url: { searchParams: query } }) => {
 	const years =
 		query.get('years')?.split('|').map(parseInt) ||
 		Object.values(YearLevels).filter((y): y is number => typeof y === 'number');
