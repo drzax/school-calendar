@@ -6,6 +6,7 @@ import { Categories, YearLevels } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
 import * as pkg from 'ics';
+import { CALENDAR_ID } from '$lib/constants';
 const { createEvents } = pkg;
 dayjs.extend(utc);
 // dayjs.extend(toArray);
@@ -37,7 +38,7 @@ export const get: RequestHandler = async ({ url: { searchParams: query } }) => {
 			.filter((d): d is Categories => Object.values(Categories).includes(d as Categories)) ||
 		Object.values(Categories);
 
-	const data = filterCalendarData(await getCalendarData('153'), categories, years);
+	const data = filterCalendarData(await getCalendarData(CALENDAR_ID), categories, years);
 	const eventsJson: pkg.EventAttributes[] = data.map(
 		({ allDay, start: startObj, end: endObj, title, location, description }) => {
 			const start = getDateArray(startObj, allDay ? 3 : 5);
