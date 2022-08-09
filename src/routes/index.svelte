@@ -114,9 +114,9 @@
 
 	let icalUrl: string;
 	$: if (browser)
-		icalUrl = `webcal://${document.location.hostname}/ical?years=${$selectedYearLevels.join(
+		icalUrl = `webcal://${document.location.hostname}/ical?years=${$selectedYearLevels.map(encodeURIComponent).join(
 			'|'
-		)}&categories=${$selectedCategories.join('|')}`;
+		)}&categories=${$selectedCategories.map(encodeURIComponent).join('|')}`;
 </script>
 
 <svelte:head>
