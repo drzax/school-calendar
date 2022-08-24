@@ -1,21 +1,25 @@
 <script context="module" lang="ts">
-	import type { Load } from '@sveltejs/kit';
-	import { Categories, YearLevels } from '$lib/types.d';
-	import { getCalendarData } from '$lib/utils';
-	import { CALENDAR_ID } from '$lib/constants';
+	throw new Error("@migration task: Check code was safely removed (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292722)");
 
-	export const load: Load = async ({ fetch }) => {
-		try {
-			return {
-				props: { calendar: await getCalendarData(CALENDAR_ID) }
-			};
-		} catch (error) {
-			return { error };
-		}
-	};
+	// import type { Load } from '@sveltejs/kit';
+	// import { Categories, YearLevels } from '$lib/types.d';
+	// import { getCalendarData } from '$lib/utils';
+	// import { CALENDAR_ID } from '$lib/constants';
+
+	// export const load: Load = async ({ fetch }) => {
+	// 	try {
+	// 		return {
+	// 			props: { calendar: await getCalendarData(CALENDAR_ID) }
+	// 		};
+	// 	} catch (error) {
+	// 		return { error };
+	// 	}
+	// };
 </script>
 
 <script lang="ts">
+	throw new Error("@migration task: Add data prop (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292707)");
+
 	import dayjs from 'dayjs';
 	import type { CalendarEntry } from '$lib/types.d';
 	import CalendarGroup from '$lib/CalendarGroup.svelte';
