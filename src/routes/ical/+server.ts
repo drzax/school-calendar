@@ -1,7 +1,7 @@
 import type { Dayjs } from 'dayjs';
+import { error } from '@sveltejs/kit';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
-// import toArray from 'dayjs/plugin/toArray.js';
 import { Categories, YearLevels } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
@@ -57,8 +57,15 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 		}
 	);
 
-	const { error, value: ics } = createEvents(eventsJson);
+	const { error: icsError, value: ics } = createEvents(eventsJson);
 
-	throw new Error("@migration task: Migrate this return statement (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292701)");
-	return error ? { error } : { body: ics, headers: { 'Content-Type': 'text/calendar' } };
+	if (icsError) {
+		throw error(500, 'Error creating ICS file');
+	}
+
+	return new Response(ics, {
+		headers: {
+			'Content-Type': 'text/calendar'
+		}
+	});
 };
