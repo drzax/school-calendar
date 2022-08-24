@@ -5,9 +5,8 @@ import utc from 'dayjs/plugin/utc.js';
 import { Categories, YearLevels } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
-import * as pkg from 'ics';
+import ics from 'ics';
 import { CALENDAR_ID } from '$lib/constants';
-const { createEvents } = pkg;
 dayjs.extend(utc);
 // dayjs.extend(toArray);
 
@@ -17,12 +16,12 @@ enum DateArrayPrecision {
 	MINUTE = 5
 }
 
-const getDateArray = (date: Dayjs, precision: DateArrayPrecision): pkg.DateArray => {
+const getDateArray = (date: Dayjs, precision: DateArrayPrecision): ics.DateArray => {
 	const res = date
 		.format('YYYY-MM-DD-H-m')
 		.split('-')
 		.map((d) => +d)
-		.slice(0, precision) as pkg.DateArray;
+		.slice(0, precision) as ics.DateArray;
 
 	return res;
 };
@@ -39,7 +38,7 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 		Object.values(Categories);
 
 	const data = filterCalendarData(await getCalendarData(CALENDAR_ID), categories, years);
-	const eventsJson: pkg.EventAttributes[] = data.map(
+	const eventsJson: ics.EventAttributes[] = data.map(
 		({ allDay, start: startObj, end: endObj, title, location, description }) => {
 			const start = getDateArray(startObj, allDay ? 3 : 5);
 			const end = getDateArray(endObj, allDay ? 3 : 5);
@@ -57,13 +56,13 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 		}
 	);
 
-	const { error: icsError, value: ics } = createEvents(eventsJson);
+	const { error: icsError, value: icsFile } = ics.createEvents(eventsJson);
 
 	if (icsError) {
 		throw error(500, 'Error creating ICS file');
 	}
 
-	return new Response(ics, {
+	return new Response(icsFile, {
 		headers: {
 			'Content-Type': 'text/calendar'
 		}
