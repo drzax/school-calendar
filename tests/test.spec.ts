@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('homepage has "School Calendar" in title', async ({ page }) => {
-	await page.goto('http://localhost:4173/');
+	await page.goto('/');
 	await expect(page).toHaveTitle(/School Calendar/);
 });
 
