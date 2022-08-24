@@ -99,7 +99,9 @@
 
 	let icalUrl: string;
 	$: if (browser)
-		icalUrl = `webcal://${document.location.hostname}/ical?years=${$selectedYearLevels
+		icalUrl = `webcal://${document.location.hostname}${
+			document.location.port === '' ? '' : ':' + document.location.port
+		}/ical?years=${$selectedYearLevels
 			.map(encodeURIComponent)
 			.join('|')}&categories=${$selectedCategories.map(encodeURIComponent).join('|')}`;
 </script>
