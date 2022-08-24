@@ -1,25 +1,6 @@
-<script context="module" lang="ts">
-	throw new Error("@migration task: Check code was safely removed (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292722)");
-
-	// import type { Load } from '@sveltejs/kit';
-	// import { Categories, YearLevels } from '$lib/types.d';
-	// import { getCalendarData } from '$lib/utils';
-	// import { CALENDAR_ID } from '$lib/constants';
-
-	// export const load: Load = async ({ fetch }) => {
-	// 	try {
-	// 		return {
-	// 			props: { calendar: await getCalendarData(CALENDAR_ID) }
-	// 		};
-	// 	} catch (error) {
-	// 		return { error };
-	// 	}
-	// };
-</script>
-
 <script lang="ts">
-	throw new Error("@migration task: Add data prop (https://github.com/sveltejs/kit/discussions/5774#discussioncomment-3292707)");
-
+	import type { PageData } from './$types';
+	import { Categories, YearLevels } from '$lib/types.d';
 	import dayjs from 'dayjs';
 	import type { CalendarEntry } from '$lib/types.d';
 	import CalendarGroup from '$lib/CalendarGroup.svelte';
@@ -38,7 +19,7 @@
 	import hash from 'hash-it';
 	import { browser } from '$app/env';
 	import AnnouncementPanel from '$lib/AnnouncementPanel.svelte';
-	export let calendar: CalendarEntry[];
+	export let data: PageData;
 
 	const today = dayjs();
 
@@ -54,7 +35,7 @@
 	}
 
 	$: filteredCalendar = filterCalendarData(
-		calendar,
+		data.calendar,
 		$selectedCategories,
 		$selectedYearLevels
 	).filter(({ start }) => start.isAfter(today.startOf('week')));
@@ -118,9 +99,9 @@
 
 	let icalUrl: string;
 	$: if (browser)
-		icalUrl = `webcal://${document.location.hostname}/ical?years=${$selectedYearLevels.map(encodeURIComponent).join(
-			'|'
-		)}&categories=${$selectedCategories.map(encodeURIComponent).join('|')}`;
+		icalUrl = `webcal://${document.location.hostname}/ical?years=${$selectedYearLevels
+			.map(encodeURIComponent)
+			.join('|')}&categories=${$selectedCategories.map(encodeURIComponent).join('|')}`;
 </script>
 
 <svelte:head>
