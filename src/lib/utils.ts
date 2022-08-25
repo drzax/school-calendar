@@ -83,7 +83,9 @@ const makeCalendarEntry = (obj: APICalendarFormat): CalendarEntry => {
 	const categories = inferCategories(obj.title);
 	const start = dayjs(obj.start).tz(TIMEZONE, true);
 	const end = dayjs(obj.end).tz(TIMEZONE, true);
-	const allDay = obj.allDay === '1' || start.isSame(end.subtract(1, 'day'));
+	const allDay =
+		obj.allDay === '1' ||
+		(start.hour() === 0 && start.minute() === 0 && end.hour() === 0 && end.minute() === 0);
 
 	return {
 		allDay,
