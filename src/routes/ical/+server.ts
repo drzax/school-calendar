@@ -20,7 +20,10 @@ const getDateArray = (date: Dayjs, allDay: boolean): ics.DateArray => {
 
 export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 	const years =
-		query.get('years')?.split('|').map(parseInt) ||
+		query
+			.get('years')
+			?.split('|')
+			.map((d) => +d) ||
 		Object.values(YearLevels).filter((y): y is number => typeof y === 'number');
 	const categories =
 		query
