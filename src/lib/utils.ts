@@ -5,6 +5,9 @@ import { Categories, YearLevels } from '$lib/types.d';
 import type { CalendarEntry } from '$lib/types.d';
 import { z } from 'zod';
 import { TIMEZONE } from './constants';
+import { browser } from '$app/env';
+import { selectedCategories, selectedYearLevels } from '$lib/storage';
+import { get } from 'svelte/store';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -134,3 +137,21 @@ export const filterCalendarData = (
 			(d.categories.some((d) => categories.includes(d)) || d.categories.length === 0)
 		);
 	});
+
+export const getSubscriptionUrl = () => {
+	if (!browser) return null;
+
+	const icalUrl = new URL(
+		`webcal://${document.location.hostname}${
+			document.location.port === '' ? '' : ':' + document.location.port
+		}/ical`
+	);
+
+	get(selectedCategories).forEach((category) => {
+		icalUrl.searchParams.append('categories', category);
+	});
+	get(selectedYearLevels).forEach((year) => {
+		icalUrl.searchParams.append('years', '' + year);
+	});
+	return icalUrl.toString();
+};

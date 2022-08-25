@@ -50,3 +50,4 @@ export const lastSessionDate = getStore<string | undefined>(
 );
 export const thisSessionDate = getStore<string>('thisSessionDate', now, 'local');
 export const firstSessionDate = getStore<string>('firstSessionDate', now, 'local');
+export const dismissedAnnouncements = getStore<string[]>('dismissedAnnouncements', [], 'local');
