@@ -4,7 +4,7 @@
 	import dayjs from 'dayjs';
 	import type { CalendarEntry } from '$lib/types.d';
 	import CalendarGroup from '$lib/CalendarGroup.svelte';
-	import termDates from './term-dates.json';
+	import termDates from '../lib/term-dates.json';
 	import FilterChip from '$lib/FilterChip.svelte';
 	import {
 		lastSessionDate,
@@ -137,7 +137,7 @@
 		{/if}
 	</div>
 </details>
-
+<AnnouncementPanel />
 <section class="m-1">
 	<div id="this-week">
 		<CalendarGroup
