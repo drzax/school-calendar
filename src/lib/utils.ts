@@ -1,6 +1,32 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
 import { Categories, YearLevels } from '$lib/types.d';
 import type { CalendarEntry } from '$lib/types.d';
+import { z } from 'zod';
+import { TIMEZONE } from './constants';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const APICalendarFormat = z.object({
+	id: z.string(),
+	title: z.string(),
+	start: z.string(),
+	end: z.string(),
+	description: z.string(),
+	location: z.string(),
+	allDay: z.string(),
+	category: z.string(),
+	backgroundColor: z.string(),
+	textColor: z.string(),
+	sdate: z.string(),
+	stime: z.string(),
+	edate: z.string(),
+	etime: z.string()
+});
+
+type APICalendarFormat = z.infer<typeof APICalendarFormat>;
 
 export const inferYears = (title: string): number[] => {
 	const years: number[] = [];
@@ -52,13 +78,12 @@ const inferCategories = (title: string): Categories[] => {
 	return categories;
 };
 
-const makeCalendarEntry = (obj: any): CalendarEntry => {
+const makeCalendarEntry = (obj: APICalendarFormat): CalendarEntry => {
 	const yearLevels = inferYears(obj.title);
 	const categories = inferCategories(obj.title);
-
-	const start = dayjs(obj.start);
-	const end = dayjs(obj.end);
-	const allDay = obj.allDay === '1' || start.isSame(end);
+	const start = dayjs(obj.start).tz(TIMEZONE, true);
+	const end = dayjs(obj.end).tz(TIMEZONE, true);
+	const allDay = obj.allDay === '1' || start.isSame(end.subtract(1, 'day'));
 
 	return {
 		allDay,
@@ -82,16 +107,14 @@ const makeCalendarEntry = (obj: any): CalendarEntry => {
 };
 
 export const getCalendarData = async (id: string) => {
-	const now = dayjs();
-	const url = `https://epublisherapp.com/public/calendar/getevent/${id}?category=&start=${now
-		.subtract(1, 'week')
-		.format('YYYY-MM-DD')}&false=${now.year() + 1}-01-01`;
+	// Removed the get params for simplicity since they don't seem to do anything.
+	const url = `https://epublisherapp.com/public/calendar/getevent/${id}`;
+
 	const res = await fetch(url);
 
 	if (res.ok) {
-		return ((await res.json()) as any[])
-			.map(makeCalendarEntry)
-			.sort((a, b) => a.start.valueOf() - b.start.valueOf());
+		const rawData = z.array(APICalendarFormat).parse(await res.json());
+		return rawData.map(makeCalendarEntry).sort((a, b) => a.start.valueOf() - b.start.valueOf());
 	}
 
 	const { message } = await res.json();

@@ -1,29 +1,21 @@
 import type { Dayjs } from 'dayjs';
 import { error } from '@sveltejs/kit';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js';
 import { Categories, YearLevels } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
 import ics from 'ics';
 import { CALENDAR_ID } from '$lib/constants';
-dayjs.extend(utc);
-// dayjs.extend(toArray);
 
-enum DateArrayPrecision {
-	DAY = 3,
-	HOUR = 4,
-	MINUTE = 5
-}
-
-const getDateArray = (date: Dayjs, precision: DateArrayPrecision): ics.DateArray => {
-	const res = date
-		.format('YYYY-MM-DD-H-m')
-		.split('-')
-		.map((d) => +d)
-		.slice(0, precision) as ics.DateArray;
-
-	return res;
+const getDateArray = (date: Dayjs, allDay: boolean): ics.DateArray => {
+	return allDay
+		? [date.year(), date.month() + 1, date.date()]
+		: [
+				date.utc().year(),
+				date.utc().month() + 1,
+				date.utc().date(),
+				date.utc().hour(),
+				date.utc().minute()
+		  ];
 };
 
 export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
@@ -40,9 +32,8 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 	const data = filterCalendarData(await getCalendarData(CALENDAR_ID), categories, years);
 	const eventsJson: ics.EventAttributes[] = data.map(
 		({ allDay, start: startObj, end: endObj, title, location, description }) => {
-			const start = getDateArray(startObj, allDay ? 3 : 5);
-			const end = getDateArray(endObj, allDay ? 3 : 5);
-
+			const start = getDateArray(startObj, allDay);
+			const end = getDateArray(endObj, allDay);
 			return {
 				start,
 				end,
@@ -50,8 +41,10 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 				location: location,
 				description: description,
 				calName: 'School Calendar',
-				startOutputType: 'local',
-				endOutputType: 'local'
+				startInputType: 'utc',
+				startOutputType: 'utc',
+				endInputType: 'utc',
+				endOutputType: 'utc'
 			};
 		}
 	);
