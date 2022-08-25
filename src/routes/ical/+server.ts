@@ -20,15 +20,11 @@ const getDateArray = (date: Dayjs, allDay: boolean): ics.DateArray => {
 
 export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 	const years =
-		query
-			.get('years')
-			?.split('|')
-			.map((d) => +d) ||
+		query.getAll('years').map((d) => +d) ||
 		Object.values(YearLevels).filter((y): y is number => typeof y === 'number');
 	const categories =
 		query
-			.get('categories')
-			?.split('|')
+			.getAll('categories')
 			.filter((d): d is Categories => Object.values(Categories).includes(d as Categories)) ||
 		Object.values(Categories);
 
@@ -60,7 +56,7 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 
 	return new Response(icsFile, {
 		headers: {
-			'Content-Type': 'text/calendar'
+			'Content-Type': 'text/plain'
 		}
 	});
 };

@@ -97,13 +97,20 @@
 		start.isAfter(today.add(1, 'week').endOf('week'))
 	);
 
-	let icalUrl: string;
-	$: if (browser)
-		icalUrl = `webcal://${document.location.hostname}${
-			document.location.port === '' ? '' : ':' + document.location.port
-		}/ical?years=${$selectedYearLevels
-			.map(encodeURIComponent)
-			.join('|')}&categories=${$selectedCategories.map(encodeURIComponent).join('|')}`;
+	let icalUrl: URL;
+	$: if (browser) {
+		icalUrl = new URL(
+			`webcal://${document.location.hostname}${
+				document.location.port === '' ? '' : ':' + document.location.port
+			}/ical`
+		);
+		$selectedCategories.forEach((category) => {
+			icalUrl.searchParams.append('categories', category);
+		});
+		$selectedYearLevels.forEach((year) => {
+			icalUrl.searchParams.append('years', '' + year);
+		});
+	}
 </script>
 
 <svelte:head>
@@ -126,7 +133,7 @@
 			{/each}
 		</div>
 		{#if icalUrl}
-			<a href={icalUrl}>Subscribe to this calendar?</a>
+			<a href={icalUrl.toString()}>Subscribe to this calendar?</a>
 		{/if}
 	</div>
 </details>
