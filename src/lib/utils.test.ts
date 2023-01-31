@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { inferYears } from './utils';
 
 test('inferYears - Year <number>', () => {
