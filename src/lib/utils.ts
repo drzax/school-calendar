@@ -5,7 +5,7 @@ import { Categories, YearLevels } from '$lib/types.d';
 import type { CalendarEntry } from '$lib/types.d';
 import { z } from 'zod';
 import { TIMEZONE } from './constants';
-import { browser } from '$app/env';
+import { browser } from '$app/environment';
 import { selectedCategories, selectedYearLevels } from '$lib/storage';
 import { get } from 'svelte/store';
 

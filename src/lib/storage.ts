@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { writable } from 'svelte/store';
-import { browser } from '$app/env';
+import { browser } from '$app/environment';
 import type { CalendarDigestEntry, YearLevels } from '$lib/types.d';
 import { Categories } from '$lib/types.d';
 

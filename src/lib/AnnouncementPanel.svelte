@@ -1,6 +1,6 @@
 <script type="ts">
 	import { announcements, type Announcement } from '$lib/announcements';
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import { dismissedAnnouncements } from '$lib/storage';
 	let unseen: Announcement[] = [];
 	$: if (browser)

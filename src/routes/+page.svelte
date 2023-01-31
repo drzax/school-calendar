@@ -17,7 +17,7 @@
 	import { filterCalendarData } from '$lib/utils';
 	import type { CalendarDigestData } from '$lib/types.d';
 	import hash from 'hash-it';
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import AnnouncementPanel from '$lib/AnnouncementPanel.svelte';
 	export let data: PageData;
 
