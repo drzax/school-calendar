@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_CALENDAR } from '$lib/constants';
 	import Header from '$lib/Header.svelte';
 	import '../app.css';
 </script>
@@ -17,11 +18,8 @@
 		</p>
 
 		<p class="mt-2">
-			Data is sourced directly from the live <a
-				href="https://epublisherapp.com/public/calendars/app/301935/C1234/dEt1S3JGKzZkR3orNFp2aVQ2QTk4UT09"
-				>public calendar</a
-			>, which you should always treat as the source of truth (i.e. don't blame me if you miss an
-			assembly).
+			Data is sourced directly from the live <a href={PUBLIC_CALENDAR}>public calendar</a>, which
+			you should always treat as the source of truth (i.e. don't blame me if you miss an assembly).
 		</p>
 
 		<p class="mt-2">
