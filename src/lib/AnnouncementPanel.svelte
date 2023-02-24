@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
 	import { announcements, type Announcement } from '$lib/announcements';
 	import { browser } from '$app/environment';
 	import { dismissedAnnouncements } from '$lib/storage';
