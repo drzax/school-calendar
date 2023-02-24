@@ -33,7 +33,7 @@ type APICalendarFormat = z.infer<typeof APICalendarFormat>;
 
 export const inferYears = (title: string): number[] => {
 	const years: number[] = [];
-	[...title.matchAll(/(year|yr)\s?([1-6])(\s?-\s?([1-6]))?/gi)].forEach((d) => {
+	[...title.matchAll(/(years?|yrs?)\s?([1-6])(\s?-\s?([1-6]))?/gi)].forEach((d) => {
 		const start = +d[2];
 		years.push(start);
 		const end = +d[4];
@@ -45,13 +45,13 @@ export const inferYears = (title: string): number[] => {
 		}
 	});
 
-	[...title.matchAll(/(year|yr)([\s,&]+([1-6])){2,}/gi)].forEach(([match]) => {
+	[...title.matchAll(/(years?|yrs?)([\s,&]+([1-6])){2,}/gi)].forEach(([match]) => {
 		match.split('').forEach((d) => {
 			if (Number.isInteger(+d) && +d < 7 && +d > 0) years.push(+d);
 		});
 	});
 
-	[...title.matchAll(/prep\s?-\s?([1-6])/gi)].forEach(([match, endYear]) => {
+	[...title.matchAll(/p(rep)?\s?-\s?([1-6])/gi)].forEach(([match, _, endYear]) => {
 		for (var i = 0; i <= +endYear; i++) {
 			years.push(i);
 		}

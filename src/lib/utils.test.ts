@@ -37,6 +37,12 @@ test('inferYears range Yr <number>-<number>', () => {
 	expect(years).toEqual([1, 2, 3]);
 });
 
+test('inferYears range <number>-<number>', () => {
+	const title = 'P-6 Life Education Visit';
+	const years = inferYears(title);
+	expect(years).toEqual([0, 1, 2, 3, 4, 5, 6]);
+});
+
 test('inferYears range Year <number>-<number>', () => {
 	const title = 'Year 1-3 Parent/Carer-Teacher Interviews (Teams Meeting)';
 	const years = inferYears(title);
@@ -83,4 +89,10 @@ test('inferYears range with prep', () => {
 	const title = 'Prep-3 Swim Carnivals';
 	const years = inferYears(title);
 	expect(years).toEqual([0, 1, 2, 3]);
+});
+
+test('inferYears Yrs 4, 5, 6', () => {
+	const title = 'Yrs 4, 5, 6';
+	const years = inferYears(title);
+	expect(years).toEqual([4, 5, 6]);
 });
