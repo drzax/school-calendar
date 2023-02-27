@@ -57,16 +57,15 @@ export const inferYears = (title: string): number[] => {
 		}
 	});
 
-	// This is a special case for year six activities about preparation for year 7
+	// This is a special cases for year six activities about preparation for year 7
 	if (title.match(/year 7/i)) years.push(6);
+
 	if (title.match(/prep/i)) years.push(0);
 	if (title.match(/junior.+(assembly)/i)) years.push(0, 1, 2, 3);
 	if (title.match(/junior.+(choir)/i)) years.push(1, 2);
 	if (title.match(/middle.+(choir)/i)) years.push(3, 4);
 	if (title.match(/senior.+(choir)/i)) years.push(5, 6);
 	if (title.match(/senior.+(assembly)/i)) years.push(4, 5, 6);
-	if (title.match(/junior band/i)) years.push(4);
-	if (title.match(/senior band/i)) years.push(5, 6);
 
 	return years.filter((d, i, arr) => arr.indexOf(d) === i).sort((a, b) => a - b);
 };
