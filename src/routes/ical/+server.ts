@@ -1,4 +1,5 @@
 import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { error } from '@sveltejs/kit';
 import { Categories, YearLevels } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
@@ -28,17 +29,17 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 			.filter((d): d is Categories => Object.values(Categories).includes(d as Categories)) ||
 		Object.values(Categories);
 
-	const data = filterCalendarData(await getCalendarData(CALENDAR_ID), categories, years);
+	const data = filterCalendarData(await getCalendarData(), categories, years);
 	const eventsJson: ics.EventAttributes[] = data.map(
 		({ allDay, start: startObj, end: endObj, title, location, description }) => {
-			const start = getDateArray(startObj, allDay);
-			const end = getDateArray(endObj, allDay);
+			const start = getDateArray(dayjs(startObj), allDay);
+			const end = getDateArray(dayjs(endObj), allDay);
 			return {
 				start,
 				end,
 				title: title,
-				location: location,
-				description: description,
+				location: location || undefined,
+				description: description || undefined,
 				calName: 'School Calendar',
 				startInputType: 'utc',
 				startOutputType: 'utc',

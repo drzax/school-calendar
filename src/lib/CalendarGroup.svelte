@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CalendarEntry } from '$lib/types.d';
+	import dayjs from 'dayjs';
 	import { PUBLIC_CALENDAR } from './constants';
 	export let title: string;
 	export let subtitle: string | undefined = undefined;
@@ -11,7 +12,7 @@
 	{#if subtitle}<h4 class="mr-3 mt-1 text-sm text-gray-500">{subtitle}</h4>{/if}
 </header>
 <div class="rounded-md my-2 bg-white shadow">
-	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, stime, etime, location, isNew, isUpdated } (id)}
+	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, location, isNew, isUpdated } (id)}
 		<div class="p-3 border-b flex flex-col md:flex-row justify-start">
 			<div class="md:mx-2 md:my-0 my-2 flex-1">
 				<h4 class="font-semibold text-pink-500">
@@ -47,11 +48,11 @@
 								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 							/>
 						</svg>
-						{start.format('dddd, D MMMM')}
-						{#if !end.isSame(start, 'day')}
-							- {allDay && !start.isSame(end)
-								? end.subtract(1, 'minute').format('dddd, D MMMM')
-								: end.format('dddd, D MMMM')}{/if}
+						{dayjs(start).format('dddd, D MMMM')}
+						{#if !dayjs(end).isSame(start, 'day')}
+							- {allDay && !dayjs(start).isSame(end)
+								? dayjs(end).subtract(1, 'minute').format('dddd, D MMMM')
+								: dayjs(end).format('dddd, D MMMM')}{/if}
 					</span>
 					<span class="ml-3"
 						><svg
@@ -69,16 +70,16 @@
 							/>
 						</svg>
 						{#if allDay}All day{:else}
-							{stime} - {etime}{/if}
+							{dayjs(start).format('HH:mm')} - {dayjs(end).format('HH:mm')}{/if}
 					</span>
 				</p>
-				{#if description.trim().length > 0 || location.trim().length > 0}
+				{#if (description || '').trim().length > 0 || (location || '').trim().length > 0}
 					<details class="text-sm">
 						<summary class="text-gray-500">Details</summary>
-						{#if description.trim().length > 0}
+						{#if (description || '').trim().length > 0}
 							<div>{description}</div>
 						{/if}
-						{#if location.trim().length > 0}
+						{#if (location || '').trim().length > 0}
 							<div><strong>Location:</strong> {location}</div>
 						{/if}
 					</details>

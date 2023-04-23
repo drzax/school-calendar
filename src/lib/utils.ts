@@ -12,7 +12,7 @@ import { get } from 'svelte/store';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const APICalendarFormat = z.object({
+const EpublisherAPICalendarFormat = z.object({
 	id: z.string(),
 	title: z.string(),
 	start: z.string(),
@@ -29,14 +29,38 @@ const APICalendarFormat = z.object({
 	etime: z.string()
 });
 
-type APICalendarFormat = z.infer<typeof APICalendarFormat>;
+const WebsiteAPICalendarFormat = z.object({
+	ID: z.number(),
+	Title: z.string(),
+	allDayEvent: z.boolean(),
+	// attachments: null,
+	category: z.string().nullable(),
+	description: z.string(),
+	durationMinutes: z.number(),
+	durationSeconds: z.number(),
+	endDate: z.string(), // ISO datetime
+	eventCancelled: z.boolean(),
+	// eventContact: null,
+	eventDate: z.string(), // ISO datetime
+	eventSummary: z.string().nullable(),
+	// eventType: 0,
+	location: z.string().nullable(),
+	// recurrenceException: null,
+	// recurrenceID: null,
+	// recurrenceRule: null,
+	// recurring: false,
+	uid: z.string().nullable()
+});
+
+type EpublisherAPICalendarFormat = z.infer<typeof EpublisherAPICalendarFormat>;
+type WebsiteAPICalendarFormat = z.infer<typeof WebsiteAPICalendarFormat>;
 
 export const inferYears = (title: string): number[] => {
 	const years: number[] = [];
-	[...title.matchAll(/(years?|yrs?)\s?([1-6])(\s?-\s?([1-6]))?/gi)].forEach((d) => {
+	[...title.matchAll(/(years?|yrs?)\s?([1-6])(\s?(-|to)\s?([1-6]))?/gi)].forEach((d) => {
 		const start = +d[2];
 		years.push(start);
-		const end = +d[4];
+		const end = +d[5];
 
 		if (end && end > start) {
 			for (let i = start + 1; i <= end; i++) {
@@ -80,7 +104,7 @@ const inferCategories = (title: string): Categories[] => {
 	return categories;
 };
 
-const makeCalendarEntry = (obj: APICalendarFormat): CalendarEntry => {
+const makeCalendarEntryFromEpublisher = (obj: EpublisherAPICalendarFormat): CalendarEntry => {
 	const yearLevels = inferYears(obj.title);
 	const categories = inferCategories(obj.title);
 	const start = dayjs(obj.start).tz(TIMEZONE, true);
@@ -97,28 +121,135 @@ const makeCalendarEntry = (obj: APICalendarFormat): CalendarEntry => {
 		id: obj.id,
 		location: obj.location,
 		// Start
-		sdate: obj.sdate,
-		start,
-		stime: obj.stime,
+		start: start.toISOString(),
 		// End
-		edate: obj.edate,
-		end,
-		etime: obj.etime,
+		end: end.toISOString(),
 		// Inferred categories
 		yearLevels,
 		categories
 	};
 };
 
-export const getCalendarData = async (id: string) => {
+const makeCalendarEntryFromWebsite = (obj: WebsiteAPICalendarFormat): CalendarEntry => {
+	const yearLevels = inferYears(obj.Title);
+	const categories = inferCategories(obj.Title);
+	const start = dayjs(obj.eventDate);
+	const end = dayjs(obj.endDate);
+	const allDay =
+		obj.allDayEvent ||
+		(start.hour() === 0 && start.minute() === 0 && end.hour() === 0 && end.minute() === 0);
+
+	return {
+		allDay,
+		category: obj.category,
+		title: obj.Title,
+		description: obj.description,
+		id: String(obj.ID),
+		location: obj.location,
+		// Start
+		start: start.toISOString(),
+		// End
+		end: end.toISOString(),
+		// Inferred categories
+		yearLevels,
+		categories
+	};
+};
+
+const fetchWebsiteCalendarData = async (startDate: string): Promise<WebsiteAPICalendarFormat[]> => {
+	const endpoint =
+		'https://westendss.eq.edu.au/CalendarAndNews/EventsCalendar/_vti_bin/z1/EventsCalendar/service.svc/v1/CalendarEvents/items';
+
+	const settings = {
+		timezone: 'Australia/Brisbane',
+		showFilters: true,
+		displayMode: 0,
+		calendarMode: 1,
+		layout: 'ListLeftVertical',
+		defaultCalendarMode: 0,
+		defaultCalendarView: 2,
+		headerTitle: 'Events Calendar',
+		showHeading: false,
+		upcomingItemLimit: 0,
+		webServerRelativeUrl: '/CalendarAndNews/EventsCalendar',
+		renderBoxShadow: false,
+		truncateTitle: true,
+		truncateSummary: true,
+		hideIfNoData: false,
+		isEditMode: false,
+		uniqueId: '7686f9f2-83bb-44e4-ba2a-dc57f1d0fa22',
+		seeAllTitle: 'See all events',
+		showSeeAll: false,
+		allEventsLink: '/CalendarAndNews/EventsCalendar/Pages/EventsCalendar.aspx',
+		listTitle: 'Calendar',
+		startDateField: 'EventDate',
+		endDateField: 'EndDate',
+		titleField: 'Title',
+		summaryField: 'Summary',
+		contactField: 'Z1EventContact',
+		descriptionField: 'Description',
+		locationField: 'Location'
+	};
+
+	const params = {
+		settings: JSON.stringify(settings),
+		startDate,
+		overlap: '10',
+		skip: '0',
+		page: '1'
+		// _: '1679613479181'
+	};
+
+	const url = new URL(endpoint);
+	url.search = String(new URLSearchParams(params));
+
+	const res = await fetch(url);
+
+	if (res.ok) {
+		const json = await res.json();
+		// console.log('startDate :>> ', startDate);
+		// console.table(json.map(({ ID, Title, eventDate }) => ({ ID, Title, eventDate })));
+		return z.array(WebsiteAPICalendarFormat).parse(json);
+	} else {
+		return [];
+	}
+};
+
+const getWebsiteCalendarData = async (): Promise<CalendarEntry[]> => {
+	const today = dayjs().startOf('month');
+	const dates = [
+		today.toISOString(),
+		today.add(1, 'month').toISOString(),
+		today.add(2, 'months').toISOString()
+	];
+	const data: WebsiteAPICalendarFormat[] = (
+		await Promise.all(dates.map((d) => fetchWebsiteCalendarData(d)))
+	).flat();
+
+	return data
+		.reduce<WebsiteAPICalendarFormat[]>((acc, d, i, arr) => {
+			if (i === arr.findIndex((dd) => dd.ID === d.ID && dd.eventDate === d.eventDate)) {
+				acc.push(d);
+			}
+			return acc;
+		}, [])
+		.map(makeCalendarEntryFromWebsite)
+		.sort((a, b) => new Date(a.start).valueOf() - new Date(b.start).valueOf());
+
+	throw new Error('Could not get website calendar data');
+};
+
+const getEpublisherCalendarData = async (id: string) => {
 	// Removed the get params for simplicity since they don't seem to do anything.
 	const url = `https://epublisherapp.com/public/calendar/getevent/${id}`;
 
 	const res = await fetch(url);
 
 	if (res.ok) {
-		const rawData = z.array(APICalendarFormat).parse(await res.json());
-		return rawData.map(makeCalendarEntry).sort((a, b) => a.start.valueOf() - b.start.valueOf());
+		const rawData = z.array(EpublisherAPICalendarFormat).parse(await res.json());
+		return rawData
+			.map(makeCalendarEntryFromEpublisher)
+			.sort((a, b) => new Date(a.start).valueOf() - new Date(b.start).valueOf());
 	}
 
 	const { message } = await res.json();
@@ -153,4 +284,8 @@ export const getSubscriptionUrl = () => {
 		icalUrl.searchParams.append('years', '' + year);
 	});
 	return icalUrl.toString();
+};
+
+export const getCalendarData = async (id: string | undefined = undefined) => {
+	return typeof id === 'undefined' ? getWebsiteCalendarData() : getEpublisherCalendarData(id);
 };

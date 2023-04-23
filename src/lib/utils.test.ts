@@ -61,6 +61,18 @@ test('inferYears range Year <number> - <number>', () => {
 	expect(years).toEqual([1, 2, 3]);
 });
 
+test('inferYears range Years <number> to <number>', () => {
+	const title = 'Choral Winter Concert - Years 3 to 6';
+	const years = inferYears(title);
+	expect(years).toEqual([3, 4, 5, 6]);
+});
+
+test('inferYears range Yr <number> to <number>', () => {
+	const title = 'Choral Winter Concert - Yr 3 to 6';
+	const years = inferYears(title);
+	expect(years).toEqual([3, 4, 5, 6]);
+});
+
 test('inferYears list <number>, <number> & <number>', () => {
 	const title = 'Year 4,5&6 Swim Carnivals';
 	const years = inferYears(title);
@@ -95,4 +107,85 @@ test('inferYears Yrs 4, 5, 6', () => {
 	const title = 'Yrs 4, 5, 6';
 	const years = inferYears(title);
 	expect(years).toEqual([4, 5, 6]);
+});
+
+test('parse API response', () => {
+	const data = [
+		{
+			ID: 846,
+			Title: 'Term 2 ends',
+			allDayEvent: true,
+			attachments: null,
+			category: null,
+			description: '',
+			durationMinutes: 1439,
+			durationSeconds: 86340,
+			endDate: '2023-06-23T13:59:00Z',
+			eventCancelled: false,
+			eventContact: null,
+			eventDate: '2023-06-22T14:00:00Z',
+			eventSummary: null,
+			eventType: 0,
+			location: 'Queensland',
+			recurrenceException: null,
+			recurrenceID: null,
+			recurrenceRule: null,
+			recurring: false,
+			uid: null
+		},
+		{
+			ID: 573,
+			Title: 'ELEV8 - "CSIRO Crest Award - Blue Crest Club"',
+			allDayEvent: false,
+			attachments: null,
+			category: null,
+			description:
+				'<html><head><style>\r\n' +
+				'p.MsoNormal, li.MsoNormal, div.MsoNormal {\n' +
+				'margin:0cm;\n' +
+				'margin-bottom:.0001pt;\n' +
+				'font-size:11.0pt;\n' +
+				'font-family:"Calibri",sans-serif;\n' +
+				'}\n' +
+				'\n' +
+				'a:link, span.MsoHyperlink {\n' +
+				'color:#0563C1;\n' +
+				'text-decoration:underline;\n' +
+				'}\n' +
+				'\n' +
+				'span.MsoHyperlinkFollowed {\n' +
+				'color:#954F72;\n' +
+				'text-decoration:underline;\n' +
+				'}\n' +
+				'\n' +
+				'span.EmailStyle17 {\n' +
+				'font-family:"Calibri",sans-serif;\n' +
+				'color:windowtext;\n' +
+				'}\n' +
+				'\n' +
+				'.MsoChpDefault {\n' +
+				'font-family:"Calibri",sans-serif;\n' +
+				'}\n' +
+				'\n' +
+				'div.WordSection1 {\n' +
+				'}\n' +
+				'</style></head><body lang="EN-AU" link="#0563C1" vlink="#954F72" style=""><div class="WordSection1"><p class="MsoNormal">&#160;</p></div></body></html>',
+			durationMinutes: 60,
+			durationSeconds: 3600,
+			endDate: '2023-06-29T23:00:00Z',
+			eventCancelled: false,
+			eventContact: null,
+			eventDate: '2023-06-29T22:00:00Z',
+			eventSummary: null,
+			eventType: 5,
+			location: 'Tech Hub',
+			recurrenceException: '2023-04-06T22:00:00Z;2023-04-13T22:00:00Z',
+			recurrenceID: '573.0.2023-06-29T22:00:00Z',
+			recurrenceRule: 'FREQ=WEEKLY;BYDAY=;WKST=MO',
+			recurring: true,
+			uid: '{3B6A84AB-F492-49EC-9082-F18CCDEC7677}'
+		}
+	];
+
+	// expect(WebsiteAPICalendarFormat.parse())
 });
