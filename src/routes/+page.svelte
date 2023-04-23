@@ -38,7 +38,7 @@
 		data.calendar,
 		$selectedCategories,
 		$selectedYearLevels
-	).filter(({ start }) => start.isAfter(today.startOf('week')));
+	).filter(({ start }) => dayjs(start).isAfter(today.startOf('week')));
 
 	const calendarDigestMap = new Map<string, CalendarDigestData>($calendarDigest);
 
@@ -87,14 +87,16 @@
 		.map((t) => ({ name: t[0], start: dayjs(t[1]), end: dayjs(t[2]) }))
 		.filter((t) => today >= t.start.startOf('week') && today <= t.end.endOf('week'))[0];
 	const currentWeek = term && today.diff(term.start.startOf('week'), 'week') + 1;
-	$: thisWeek = displayableCalendar.filter(({ start, end }) => start.isBefore(today.endOf('week')));
+	$: thisWeek = displayableCalendar.filter(({ start, end }) =>
+		dayjs(start).isBefore(today.endOf('week'))
+	);
 	$: nextWeek = displayableCalendar.filter(
 		({ start, end }) =>
-			start.isAfter(today.add(1, 'week').startOf('week')) &&
-			start.isBefore(today.add(1, 'week').endOf('week'))
+			dayjs(start).isAfter(today.add(1, 'week').startOf('week')) &&
+			dayjs(start).isBefore(today.add(1, 'week').endOf('week'))
 	);
 	$: later = displayableCalendar.filter(({ start, end }) =>
-		start.isAfter(today.add(1, 'week').endOf('week'))
+		dayjs(start).isAfter(today.add(1, 'week').endOf('week'))
 	);
 
 	let icalUrl: URL;

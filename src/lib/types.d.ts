@@ -28,16 +28,16 @@ export enum YearLevels {
 
 export type CalendarEntry = {
 	allDay: boolean;
-	category: string;
-	description: string;
-	edate: string;
-	end: Dayjs;
-	etime: string;
+	category: string | null;
+	description: string | null;
+	// edate: string;
+	end: string;
+	// etime: string;
 	id: string;
-	location: string;
-	sdate: string;
-	start: Dayjs;
-	stime: string;
+	location: string | null;
+	// sdate: string;
+	start: string;
+	// stime: string;
 	title: string;
 	yearLevels: YearLevels[];
 	categories: Categories[];
