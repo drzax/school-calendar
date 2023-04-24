@@ -12,7 +12,7 @@
 	{#if subtitle}<h4 class="mr-3 mt-1 text-sm text-gray-500">{subtitle}</h4>{/if}
 </header>
 <div class="rounded-md my-2 bg-white shadow">
-	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, location, isNew, isUpdated } (id)}
+	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, location, isNew, isUpdated } (`${id} ${start}`)}
 		<div class="p-3 border-b flex flex-col md:flex-row justify-start">
 			<div class="md:mx-2 md:my-0 my-2 flex-1">
 				<h4 class="font-semibold text-pink-500">
