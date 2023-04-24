@@ -11,6 +11,7 @@ import { get } from 'svelte/store';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.tz.setDefault(TIMEZONE);
 
 const EpublisherAPICalendarFormat = z.object({
 	id: z.string(),
@@ -104,11 +105,19 @@ const inferCategories = (title: string): Categories[] => {
 	return categories;
 };
 
+/*
+ * Parses a date/time string
+ */
+const makeDayjsObj = (date: string) => {
+	// return dayjs.tz(date).tz(TIMEZONE);
+	return date.match(/(Z|(\+|\-)\d)/) ? dayjs(date, TIMEZONE) : dayjs.tz(date);
+};
+
 const makeCalendarEntryFromEpublisher = (obj: EpublisherAPICalendarFormat): CalendarEntry => {
 	const yearLevels = inferYears(obj.title);
 	const categories = inferCategories(obj.title);
-	const start = dayjs(obj.start).tz(TIMEZONE, true);
-	const end = dayjs(obj.end).tz(TIMEZONE, true);
+	const start = makeDayjsObj(obj.start);
+	const end = makeDayjsObj(obj.end);
 	const allDay =
 		obj.allDay === '1' ||
 		(start.hour() === 0 && start.minute() === 0 && end.hour() === 0 && end.minute() === 0);
@@ -133,8 +142,8 @@ const makeCalendarEntryFromEpublisher = (obj: EpublisherAPICalendarFormat): Cale
 const makeCalendarEntryFromWebsite = (obj: WebsiteAPICalendarFormat): CalendarEntry => {
 	const yearLevels = inferYears(obj.Title);
 	const categories = inferCategories(obj.Title);
-	const start = dayjs(obj.eventDate);
-	const end = dayjs(obj.endDate);
+	const start = makeDayjsObj(obj.eventDate);
+	const end = makeDayjsObj(obj.endDate);
 	const allDay =
 		obj.allDayEvent ||
 		(start.hour() === 0 && start.minute() === 0 && end.hour() === 0 && end.minute() === 0);
