@@ -152,7 +152,7 @@ const makeCalendarEntryFromWebsite = (obj: WebsiteAPICalendarFormat): CalendarEn
 		allDay,
 		category: obj.category,
 		title: obj.Title,
-		description: obj.description,
+		description: cleanDescriptionString(obj.description),
 		id: String(obj.ID),
 		location: obj.location,
 		// Start
@@ -297,4 +297,14 @@ export const getSubscriptionUrl = () => {
 
 export const getCalendarData = async (id: string | undefined = undefined) => {
 	return typeof id === 'undefined' ? getWebsiteCalendarData() : getEpublisherCalendarData(id);
+};
+
+export const cleanDescriptionString = (html: string) => {
+	return html
+		.replace(/<head.*<\/head>/s, '') // Remove head tags and everything between
+		.replace(/<\/?(html|body|div)[^>]*>/gs, '') // HTML and body tags
+		.replace(/(&nbsp;|&#160;)/g, '') // spaces
+		.replace(/(<\w+)\s[^>]+/g, '$1') // all attribututes
+		.trim()
+		.replace(/<p>\n*\s*(<br\/?>)*\s*\n*<\/p>/g, ''); // all empty p tags
 };

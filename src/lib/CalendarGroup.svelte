@@ -78,7 +78,7 @@
 					<details class="text-sm">
 						<summary class="text-gray-500">Details</summary>
 						{#if (description || '').trim().length > 0}
-							<div>{description}</div>
+							<div>{@html description}</div>
 						{/if}
 						{#if (location || '').trim().length > 0}
 							<div><strong>Location:</strong> {location}</div>

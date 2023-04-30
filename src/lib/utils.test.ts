@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { inferYears } from './utils';
+import { cleanDescriptionString, inferYears } from './utils';
 
 test('inferYears - Year <number>', () => {
 	const title = 'Year 6 Choir';
@@ -188,4 +188,40 @@ test('parse API response', () => {
 	];
 
 	// expect(WebsiteAPICalendarFormat.parse())
+});
+
+test('strip HTML from description', () => {
+	const description =
+		'<html><head><style>\r\n' +
+		'p.MsoNormal, li.MsoNormal, div.MsoNormal {\n' +
+		'margin:0cm;\n' +
+		'margin-bottom:.0001pt;\n' +
+		'font-size:11.0pt;\n' +
+		'font-family:"Calibri",sans-serif;\n' +
+		'}\n' +
+		'\n' +
+		'a:link, span.MsoHyperlink {\n' +
+		'color:#0563C1;\n' +
+		'text-decoration:underline;\n' +
+		'}\n' +
+		'\n' +
+		'span.MsoHyperlinkFollowed {\n' +
+		'color:#954F72;\n' +
+		'text-decoration:underline;\n' +
+		'}\n' +
+		'\n' +
+		'span.EmailStyle17 {\n' +
+		'font-family:"Calibri",sans-serif;\n' +
+		'color:windowtext;\n' +
+		'}\n' +
+		'\n' +
+		'.MsoChpDefault {\n' +
+		'font-family:"Calibri",sans-serif;\n' +
+		'}\n' +
+		'\n' +
+		'div.WordSection1 {\n' +
+		'}\n' +
+		'</style></head><body lang="EN-AU" link="#0563C1" vlink="#954F72" style=""><div class="WordSection1"><p class="MsoNormal">&#160;</p></div></body></html>';
+
+	expect(cleanDescriptionString(description)).toEqual('');
 });
