@@ -1,23 +1,10 @@
-import type { Dayjs } from 'dayjs';
-import dayjs from 'dayjs';
 import { error } from '@sveltejs/kit';
 import { Categories, YearLevels } from '$lib/types.d';
 import { filterCalendarData, getCalendarData } from '$lib/utils';
 import type { RequestHandler } from '@sveltejs/kit';
 import ics from 'ics';
-import { CALENDAR_ID } from '$lib/constants';
-
-const getDateArray = (date: Dayjs, allDay: boolean): ics.DateArray => {
-	return allDay
-		? [date.year(), date.month() + 1, date.date()]
-		: [
-				date.utc().year(),
-				date.utc().month() + 1,
-				date.utc().date(),
-				date.utc().hour(),
-				date.utc().minute()
-		  ];
-};
+import { CALENDAR_ID, TIMEZONE } from '$lib/constants';
+import { getDateArray, makeDayjsObj } from '$lib/datetime';
 
 export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 	const years =
@@ -32,8 +19,8 @@ export const GET: RequestHandler = async ({ url: { searchParams: query } }) => {
 	const data = filterCalendarData(await getCalendarData(), categories, years);
 	const eventsJson: ics.EventAttributes[] = data.map(
 		({ allDay, start: startObj, end: endObj, title, location, description }) => {
-			const start = getDateArray(dayjs(startObj), allDay);
-			const end = getDateArray(dayjs(endObj), allDay);
+			const start = getDateArray(makeDayjsObj(startObj), allDay);
+			const end = getDateArray(makeDayjsObj(endObj), allDay);
 			return {
 				start,
 				end,

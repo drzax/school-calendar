@@ -1,6 +1,3 @@
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc.js';
-import timezone from 'dayjs/plugin/timezone.js';
 import { Categories, YearLevels } from '$lib/types.d';
 import type { CalendarEntry } from '$lib/types.d';
 import { z } from 'zod';
@@ -8,10 +5,7 @@ import { TIMEZONE } from './constants';
 import { browser } from '$app/environment';
 import { selectedCategories, selectedYearLevels } from '$lib/storage';
 import { get } from 'svelte/store';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.tz.setDefault(TIMEZONE);
+import { makeDayjsObj, today } from './datetime';
 
 const EpublisherAPICalendarFormat = z.object({
 	id: z.string(),
@@ -103,14 +97,6 @@ const inferCategories = (title: string): Categories[] => {
 	if (title.match(/assembly/i)) categories.push(Categories.Assembly);
 	if (title.match(/p&c/i)) categories.push(Categories['P&C']);
 	return categories;
-};
-
-/*
- * Parses a date/time string
- */
-const makeDayjsObj = (date: string) => {
-	// return dayjs.tz(date).tz(TIMEZONE);
-	return date.match(/(Z|(\+|\-)\d)/) ? dayjs(date, TIMEZONE) : dayjs.tz(date);
 };
 
 const makeCalendarEntryFromEpublisher = (obj: EpublisherAPICalendarFormat): CalendarEntry => {
@@ -216,8 +202,6 @@ const fetchWebsiteCalendarData = async (startDate: string): Promise<WebsiteAPICa
 
 	if (res.ok) {
 		const json = await res.json();
-		// console.log('startDate :>> ', startDate);
-		// console.table(json.map(({ ID, Title, eventDate }) => ({ ID, Title, eventDate })));
 		return z.array(WebsiteAPICalendarFormat).parse(json);
 	} else {
 		return [];
@@ -225,11 +209,11 @@ const fetchWebsiteCalendarData = async (startDate: string): Promise<WebsiteAPICa
 };
 
 const getWebsiteCalendarData = async (): Promise<CalendarEntry[]> => {
-	const today = dayjs().startOf('month');
+	const month = today.subtract(7, 'days').startOf('month');
 	const dates = [
-		today.toISOString(),
-		today.add(1, 'month').toISOString(),
-		today.add(2, 'months').toISOString()
+		month.toISOString(),
+		month.add(1, 'month').toISOString(),
+		month.add(2, 'months').toISOString()
 	];
 	const data: WebsiteAPICalendarFormat[] = (
 		await Promise.all(dates.map((d) => fetchWebsiteCalendarData(d)))
