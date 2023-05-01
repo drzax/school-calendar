@@ -14,6 +14,7 @@
 <div class="rounded-md my-2 bg-white shadow">
 	{#each entries as { id, start, end, title, description, categories, yearLevels, allDay, location, isNew, isUpdated } (`${id} ${start}`)}
 		{@const startObj = dayjs(start).tz(TIMEZONE)}
+		{@const endObj = dayjs(end).tz(TIMEZONE)}
 		<div class="p-3 border-b flex flex-col md:flex-row justify-start">
 			<div class="md:mx-2 md:my-0 my-2 flex-1">
 				<h4 class="font-semibold text-pink-500">
@@ -49,11 +50,11 @@
 								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
 							/>
 						</svg>
-						{dayjs(start).format('dddd, D MMMM')}
-						{#if !dayjs(end).isSame(start, 'day')}
-							- {allDay && !dayjs(start).isSame(end)
-								? dayjs(end).subtract(1, 'minute').format('dddd, D MMMM')
-								: dayjs(end).format('dddd, D MMMM')}{/if}
+						{startObj.format('dddd, D MMMM')}
+						{#if !endObj.isSame(start, 'day')}
+							- {allDay && !startObj.isSame(end)
+								? endObj.subtract(1, 'minute').format('dddd, D MMMM')
+								: endObj.format('dddd, D MMMM')}{/if}
 					</span>
 					<span class="ml-3"
 						><svg
@@ -71,7 +72,7 @@
 							/>
 						</svg>
 						{#if allDay}All day{:else}
-							{dayjs(start).format('HH:mm')} - {dayjs(end).format('HH:mm')}{/if}
+							{startObj.format('HH:mm')} - {endObj.format('HH:mm')}{/if}
 					</span>
 				</p>
 				{#if (description || '').trim().length > 0 || (location || '').trim().length > 0}
