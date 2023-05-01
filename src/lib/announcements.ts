@@ -24,5 +24,11 @@ export const announcements: Announcement[] = [
 		to: '2023-04-30',
 		content: `<p>The school has recently discontinued use of the 'epublisher' calendar this site is based on in favour of the calendar <a href="https://westendss.eq.edu.au/calendar-and-news/events-calendar">embedded in the school website</a>.<br><br>Though the website calendar is okay, this interface provides a few useful features it doesn't have, so I'm <strong>working to switch this tool to the new source calendar</b>.`,
 		id: 'aa83e623'
+	},
+	{
+		from: '2023-05-01',
+		to: '2023-05-07',
+		content: `<p>The school has recently changed the way it publishes calendar information for parents. This calendar now uses the <a href="https://westendss.eq.edu.au/calendar-and-news/events-calendar">new source</a> of calendar data. Please <a href="mailto:simon@elvery.net">let me know</a> if you spot any problems.`,
+		id: '42e8e4e4'
 	}
 ];

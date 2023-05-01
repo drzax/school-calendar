@@ -17,7 +17,7 @@
 		{@const endObj = dayjs(end).tz(TIMEZONE)}
 		<div class="p-3 border-b flex flex-col md:flex-row justify-start">
 			<div class="md:mx-2 md:my-0 my-2 flex-1">
-				<h4 class="font-semibold text-pink-500">
+				<h4 class="font-semibold text-pink-500 my-1">
 					{#if isNew}<span
 							class="text-sm rounded-xl px-2 inline-block text-purple-800 bg-purple-100 font-bold"
 							>new</span
@@ -34,7 +34,7 @@
 					{/if}
 					{title}
 				</h4>
-				<p class="text-gray-500 text-sm">
+				<p class="text-gray-500 text-sm my-1">
 					<span>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -51,8 +51,8 @@
 							/>
 						</svg>
 						{startObj.format('dddd, D MMMM')}
-						{#if !endObj.isSame(start, 'day')}
-							- {allDay && !startObj.isSame(end)
+						{#if !endObj.isSame(startObj, 'day')}
+							- {allDay && !startObj.isSame(endObj)
 								? endObj.subtract(1, 'minute').format('dddd, D MMMM')
 								: endObj.format('dddd, D MMMM')}{/if}
 					</span>
@@ -76,15 +76,19 @@
 					</span>
 				</p>
 				{#if (description || '').trim().length > 0 || (location || '').trim().length > 0}
-					<details class="text-sm">
-						<summary class="text-gray-500">Details</summary>
-						{#if (description || '').trim().length > 0}
-							<div>{@html description}</div>
-						{/if}
-						{#if (location || '').trim().length > 0}
-							<div><strong>Location:</strong> {location}</div>
-						{/if}
-					</details>
+					<p class="my-1">
+						<details class="text-sm">
+							<summary class="text-gray-500">Details</summary>
+							{#if (description || '').trim().length > 0}
+								<div class="my-1">{@html description}</div>
+							{/if}
+							{#if (location || '').trim().length > 0}
+								<div class="my-1">
+									<table><tr><td><strong>Location:</strong></td><td>{location}</td></tr></table>
+								</div>
+							{/if}
+						</details>
+					</p>
 				{/if}
 			</div>
 			<div class="md:text-right">
@@ -116,3 +120,25 @@
 		</div>
 	{/each}
 </div>
+
+<style>
+	details :global(table) {
+		width: 100%;
+	}
+	details :global(td) {
+		vertical-align: top;
+		padding: 0.3em 0.1em;
+	}
+
+	details :global(td:first-child) {
+		vertical-align: top;
+		padding: 0.3em 0.1em;
+		width: 30%;
+	}
+
+	details :global(tr) {
+		margin-bottom: 0.3em;
+		padding-bottom: 0.3em;
+		border-bottom: 1px solid #ccc;
+	}
+</style>
