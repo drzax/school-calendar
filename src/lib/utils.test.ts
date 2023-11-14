@@ -109,6 +109,12 @@ test('inferYears Yrs 4, 5, 6', () => {
 	expect(years).toEqual([4, 5, 6]);
 });
 
+test('inferYears should not assign 10+ to year 1', () => {
+	const title = 'Last day for Year 12 (State High Schools)';
+	const years = inferYears(title);
+	expect(years).toEqual([]);
+});
+
 test('parse API response', () => {
 	const data = [
 		{

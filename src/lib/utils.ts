@@ -52,7 +52,7 @@ type WebsiteAPICalendarFormat = z.infer<typeof WebsiteAPICalendarFormat>;
 
 export const inferYears = (title: string): number[] => {
 	const years: number[] = [];
-	[...title.matchAll(/(years?|yrs?)\s?([1-6])(\s?(-|to)\s?([1-6]))?/gi)].forEach((d) => {
+	[...title.matchAll(/(years?|yrs?)\s?([1-6])\b(\s?(-|to)\s?([1-6])\b)?/gi)].forEach((d) => {
 		const start = +d[2];
 		years.push(start);
 		const end = +d[5];
@@ -64,20 +64,20 @@ export const inferYears = (title: string): number[] => {
 		}
 	});
 
-	[...title.matchAll(/(years?|yrs?)([\s,&]+([1-6])){2,}/gi)].forEach(([match]) => {
+	[...title.matchAll(/(years?|yrs?)([\s,&]+([1-6])\b){2,}/gi)].forEach(([match]) => {
 		match.split('').forEach((d) => {
 			if (Number.isInteger(+d) && +d < 7 && +d > 0) years.push(+d);
 		});
 	});
 
-	[...title.matchAll(/p(rep)?\s?-\s?([1-6])/gi)].forEach(([match, _, endYear]) => {
+	[...title.matchAll(/p(rep)?\s?-\s?([1-6])\b/gi)].forEach(([match, _, endYear]) => {
 		for (var i = 0; i <= +endYear; i++) {
 			years.push(i);
 		}
 	});
 
 	// This is a special cases for year six activities about preparation for year 7
-	if (title.match(/year 7/i)) years.push(6);
+	if (title.match(/year 7\b/i)) years.push(6);
 
 	if (title.match(/prep/i)) years.push(0);
 	if (title.match(/junior.+(assembly)/i)) years.push(0, 1, 2, 3);
