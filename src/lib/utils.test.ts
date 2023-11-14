@@ -1,5 +1,12 @@
 import { expect, test } from 'vitest';
-import { cleanDescriptionString, inferYears } from './utils';
+import { Categories } from './types.d';
+import { cleanDescriptionString, inferYears, inferCategories } from './utils';
+
+test('inferCategories - Choral', () => {
+	const title = 'Choral Summer Concert - Years 3 to 6';
+	const categories = inferCategories(title);
+	expect(categories).toEqual([Categories.Choir]);
+});
 
 test('inferYears - Year <number>', () => {
 	const title = 'Year 6 Choir';

@@ -89,9 +89,10 @@ export const inferYears = (title: string): number[] => {
 	return years.filter((d, i, arr) => arr.indexOf(d) === i).sort((a, b) => a - b);
 };
 
-const inferCategories = (title: string): Categories[] => {
+export const inferCategories = (title: string): Categories[] => {
 	const categories: Categories[] = [];
 	if (title.match(/choir/i)) categories.push(Categories.Choir);
+	if (title.match(/choral/i)) categories.push(Categories.Choir);
 	if (title.match(/band/i)) categories.push(Categories.Band);
 	if (title.match(/string/i)) categories.push(Categories.Strings);
 	if (title.match(/assembly/i)) categories.push(Categories.Assembly);
