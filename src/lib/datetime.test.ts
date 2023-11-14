@@ -3,12 +3,14 @@ import { getDateArray, makeDayjsObj } from './datetime';
 import { TIMEZONE } from './constants';
 
 // Unit tests are deliberately run in a timezone that isn't Brisbane or UTC.
-// New York has been chosen for arbitrary reasons. This tests to make sure
-// the TZ environment variable has been set when running tests.
+// Perth has been chosen for arbitrary reasons and because it does not
+// observe daylight savings time, so tests should run successfully all year
+// round. This tests to make sure the TZ environment variable has been set
+// when running tests.
 test('timezone', () => {
 	const today = new Date();
-	// New York is UTC-4 which means the timezone offset will be 4 * 60 = 240
-	expect(today.getTimezoneOffset()).toBe(240);
+	// Perth is UTC+8 which means the timezone offset will be -8 * 60 = -480
+	expect(today.getTimezoneOffset()).toBe(-480);
 });
 
 test('makeDayJsObj no timezone', () => {
